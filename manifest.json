@@ -1,0 +1,98 @@
+{
+    "name": "Python Data - 50 Exercices Interactifs",
+    "short_name": "PyExercices",
+    "description": "Apprenez NumPy, Pandas, Matplotlib & Seaborn avec 50 exercices interactifs",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "display_override": ["standalone", "minimal-ui"],
+    "orientation": "any",
+    "background_color": "#1a202c",
+    "theme_color": "#3182ce",
+    "lang": "fr",
+    "categories": ["education", "development"],
+    "icons": [
+        {
+            "src": "icon-72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "screenshot-exercises.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Interface d'exercices"
+        },
+        {
+            "src": "screenshot-mobile.png",
+            "sizes": "720x1280",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Version mobile"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Exercices NumPy",
+            "short_name": "NumPy",
+            "description": "Acceder aux exercices NumPy",
+            "url": "/?category=numpy",
+            "icons": [{ "src": "icon-numpy.png", "sizes": "96x96" }]
+        },
+        {
+            "name": "Exercices Pandas",
+            "short_name": "Pandas",
+            "description": "Acceder aux exercices Pandas",
+            "url": "/?category=pandas",
+            "icons": [{ "src": "icon-pandas.png", "sizes": "96x96" }]
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
+}

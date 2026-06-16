@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syntaxe NumPy, Pandas, Matplotlib & Seaborn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4a5568;
+            --primary-dark: #2d3748;
+            --secondary: #3182ce;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #c53030;
+            --light-bg: #f7fafc;
+            --light-text: #2d3748;
+            --light-border: #e2e8f0;
+            --dark-bg: #1a202c;
+            --dark-bg-2: #2d3748;
+            --dark-text: #e2e8f0;
+            --dark-text-light: #cbd5e0;
+            --dark-border: #4a5568;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f7fafc;
+            color: var(--light-text);
+            line-height: 1.8;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: #1a202c;
+            color: var(--dark-text);
+        }
+
+        /* Navigation Sticky */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            padding: 10px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideDown 0.3s ease;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        body.dark-mode .navbar {
+            background: #2d3748;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            border-bottom-color: #4a5568;
+        }
+
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.85em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            border-color: var(--secondary);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        body.dark-mode .nav-link {
+            color: var(--text);
+        }
+
+        body.dark-mode .nav-link:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-link {
+                font-size: 0.78em;
+                padding: 5px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-link {
+                font-size: 0.72em;
+                padding: 4px 8px;
+                gap: 4px;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+
+        
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--primary);
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .toggle-theme {
+            background: none;
+            border: none;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        body.dark-mode .toggle-theme {
+            color: var(--secondary);
+        }
+
+        .toggle-theme:hover {
+            transform: rotate(20deg) scale(1.1);
+        }
+
+        .toc-toggle {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        body.dark-mode .toc-toggle {
+            background: var(--secondary);
+        }
+
+        .toc-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            background: #2c5aa0;
+        }
+
+        /* Focus visible pour accessibilité */
+        button:focus,
+        input:focus,
+        a:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        body.dark-mode button:focus,
+        body.dark-mode input:focus,
+        body.dark-mode a:focus {
+            outline-color: var(--secondary);
+        }
+
+        /* Table of Contents Sidebar */
+        .toc-sidebar {
+            position: fixed;
+            left: -300px;
+            top: 60px;
+            width: 280px;
+            height: calc(100vh - 60px);
+            background: white;
+            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            padding: 20px;
+            z-index: 999;
+            transition: all 0.3s ease;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        body.dark-mode .toc-sidebar {
+            background: #2d3748;
+            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.2);
+            border-right-color: #4a5568;
+        }
+
+        .toc-sidebar.active {
+            left: 0;
+        }
+
+        .toc-sidebar h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        body.dark-mode .toc-sidebar h3 {
+            color: var(--secondary);
+        }
+
+        .toc-items {
+            list-style: none;
+        }
+
+        .toc-items li {
+            margin-bottom: 10px;
+        }
+
+        .toc-items a {
+            text-decoration: none;
+            color: var(--light-text);
+            transition: all 0.2s ease;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        body.dark-mode .toc-items a {
+            color: var(--dark-text-light);
+        }
+
+        .toc-items a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+            padding-left: 18px;
+        }
+
+        body.dark-mode .toc-items a:hover {
+            background: rgba(240, 147, 251, 0.1);
+            color: var(--secondary);
+        }
+
+        body {
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        body.dark-mode .container {
+            background: #2d3748;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            border-color: #4a5568;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: #2d3748;
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            animation: slideInDown 0.5s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        body.dark-mode .content {
+            background: var(--dark-bg);
+        }
+
+        .section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .section h2 {
+            background: #f7fafc;
+            color: var(--primary-dark);
+            padding: 18px 25px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            border-left: 4px solid var(--secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section h2::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .section h2:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            background: #edf2f7;
+        }
+
+        .section h2:hover::before {
+            left: 100%;
+        }
+
+        body.dark-mode .section h2 {
+            background: #1a202c;
+            color: var(--dark-text);
+            border-left-color: var(--secondary);
+            border-color: #4a5568;
+        }
+
+        body.dark-mode .section h2:hover {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            background: #2d3748;
+        }
+
+        .subsection {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 3px solid var(--secondary);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid #e2e8f0;
+            border-left-width: 3px;
+        }
+
+        body.dark-mode .subsection {
+            background: #1a202c;
+            border-left-color: var(--secondary);
+            border-color: #4a5568;
+        }
+
+        .subsection:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        body.dark-mode .subsection:hover {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .subsection h3 {
+            color: var(--primary);
+            font-size: 1.4em;
+            margin-bottom: 18px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        body.dark-mode .subsection h3 {
+            color: var(--secondary);
+        }
+
+        .code-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #ffffff;
+            border-left: 3px solid var(--secondary);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            border-left-width: 3px;
+        }
+
+        body.dark-mode .code-item {
+            background: #2d3748;
+            border-left-color: var(--secondary);
+            border-color: #4a5568;
+        }
+
+        .code-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: #f7fafc;
+        }
+
+        body.dark-mode .code-item:hover {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            background: #1a202c;
+        }
+
+        .code-line {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(90deg, #f0f0f0 0%, #ffffff 100%);
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            color: var(--primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary);
+            transition: all 0.2s ease;
+        }
+
+        body.dark-mode .code-line {
+            background: linear-gradient(90deg, var(--dark-bg-2) 0%, var(--dark-bg) 100%);
+            color: var(--secondary);
+            border-left-color: var(--secondary);
+        }
+
+        .code-line:hover {
+            box-shadow: inset 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .explanation {
+            margin-left: 20px;
+            padding: 12px;
+            border-left: 3px solid var(--warning);
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+            background: rgba(255, 193, 7, 0.05);
+            border-radius: 4px;
+            animation: slideInLeft 0.3s ease;
+        }
+
+        body.dark-mode .explanation {
+            color: var(--dark-text-light);
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .library-intro {
+            background: #edf2f7;
+            padding: 18px;
+            border-left: 3px solid var(--secondary);
+            border-radius: 6px;
+            margin-bottom: 25px;
+            color: var(--primary-dark);
+            transition: all 0.3s ease;
+            border: 1px solid #cbd5e0;
+            border-left-width: 3px;
+        }
+
+        body.dark-mode .library-intro {
+            background: #2d3748;
+            border-left-color: var(--secondary);
+            color: var(--dark-text);
+            border-color: #4a5568;
+        }
+
+        .library-intro:hover {
+            transform: translateX(3px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .library-intro strong {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        footer {
+            background: #f7fafc;
+            padding: 25px;
+            text-align: center;
+            color: #718096;
+            border-top: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode footer {
+            background: #1a202c;
+            color: #a0aec0;
+            border-top-color: #4a5568;
+        }
+
+        /* Barre de progression */
+        .progress-bar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            height: 2px;
+            background: var(--secondary);
+            z-index: 999;
+            transition: width 0.1s ease;
+            box-shadow: none;
+        }
+
+        /* Bouton Haut de Page */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2em;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .scroll-top:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: #2c5aa0;
+        }
+
+        body.dark-mode .scroll-top {
+            background: var(--secondary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Callouts (Alertes) */
+        .callout {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 3px solid;
+            border-radius: 4px;
+            background: #ffffff;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: slideInLeft 0.3s ease;
+            border: 1px solid;
+        }
+
+        body.dark-mode .callout {
+            background: #2d3748;
+        }
+
+        .callout-icon {
+            font-size: 1.3em;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .callout-content {
+            flex: 1;
+        }
+
+        .callout-content strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .callout-info {
+            border-left-color: #3182ce;
+            border-color: #bee3f8;
+            background: #ebf8ff;
+            color: #2c5282;
+        }
+
+        body.dark-mode .callout-info {
+            background: #1a365d;
+            border-color: #2c5282;
+            color: #90cdf4;
+        }
+
+        .callout-warning {
+            border-left-color: #d69e2e;
+            border-color: #fbd38d;
+            background: #fffaf0;
+            color: #7c2d12;
+        }
+
+        body.dark-mode .callout-warning {
+            background: #3e2723;
+            border-color: #7c2d12;
+            color: #fbd38d;
+        }
+
+        .callout-success {
+            border-left-color: #38a169;
+            border-color: #9ae6b4;
+            background: #f0fff4;
+            color: #22543d;
+        }
+
+        body.dark-mode .callout-success {
+            background: #1b4332;
+            border-color: #22543d;
+            color: #9ae6b4;
+        }
+
+        .callout-danger {
+            border-left-color: #c53030;
+            border-color: #fc8181;
+            background: #fff5f5;
+            color: #742a2a;
+        }
+
+        body.dark-mode .callout-danger {
+            background: #3d0000;
+            border-color: #742a2a;
+            color: #fc8181;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+
+        .badge-beginner {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        body.dark-mode .badge-beginner {
+            background: rgba(76, 175, 80, 0.2);
+            color: #81C784;
+        }
+
+        .badge-intermediate {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        body.dark-mode .badge-intermediate {
+            background: rgba(33, 150, 243, 0.2);
+            color: #64B5F6;
+        }
+
+        .badge-advanced {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        body.dark-mode .badge-advanced {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FFB74D;
+        }
+
+        /* Barre de recherche */
+        .search-container {
+            position: sticky;
+            top: 70px;
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+            display: none;
+            border: 1px solid #e2e8f0;
+        }
+
+        body.dark-mode .search-container {
+            background: #2d3748;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+            border-color: #4a5568;
+        }
+
+        .search-container.active {
+            display: block;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid var(--light-border);
+            border-radius: 6px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .search-input {
+            border-color: var(--dark-border);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .highlight {
+            background: rgba(255, 193, 7, 0.4);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        /* Indicateur de section dans TOC */
+        .toc-items a.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: var(--primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary);
+            padding-left: 15px;
+        }
+
+        body.dark-mode .toc-items a.active {
+            background: rgba(240, 147, 251, 0.2);
+            color: var(--secondary);
+            border-left-color: var(--secondary);
+        }
+
+        /* Lien vers docs */
+        .doc-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #ebf8ff;
+            color: #3182ce;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+            border: 1px solid #bee3f8;
+        }
+
+        body.dark-mode .doc-link {
+            background: #1a365d;
+            color: #63b3ed;
+            border-color: #2c5282;
+        }
+
+        .doc-link:hover {
+            background: #cce5ff;
+            transform: translateX(2px);
+        }
+
+        /* Overlay pour TOC */
+        .toc-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .toc-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Scrollbar personnalisée */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-bg);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            header {
+                padding: 30px 20px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .toc-toggle {
+                display: inline-flex !important;
+            }
+
+            .subsection {
+                padding: 15px;
+            }
+
+            .code-item {
+                padding: 12px;
+            }
+
+            .explanation {
+                margin-left: 15px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barre de progression de lecture -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Bouton Haut de Page -->
+    <button class="scroll-top" id="scrollTop" title="Retour en haut" aria-label="Retour au haut de la page">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <i class="fas fa-code" style="font-size: 1.3em; color: var(--primary);"></i>
+            <span class="navbar-brand">Data Syntax Guide</span>
+        </div>
+        <div class="navbar-right">
+
+            <a href="index.html" class="nav-link">
+                <i class="fas fa-laptop-code"></i> Exercices
+            </a>
+            <button class="toggle-theme" id="searchToggle" title="Rechercher (appuyer sur /)">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="toc-toggle" id="tocToggle">
+                <i class="fas fa-bars"></i> Guide
+            </button>
+            <button class="toggle-theme" id="themeToggle" title="Basculer le mode sombre">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Table of Contents Sidebar -->
+    <div class="toc-overlay" id="tocOverlay"></div>
+    <div class="toc-sidebar" id="tocSidebar">
+        <h3><i class="fas fa-list"></i> Sommaire</h3>
+        <ul class="toc-items">
+            <li><a href="#numpy"><i class="fas fa-calculator"></i> NumPy</a></li>
+            <li><a href="#pandas"><i class="fas fa-database"></i> Pandas</a></li>
+            <li><a href="#matplotlib"><i class="fas fa-chart-line"></i> Matplotlib</a></li>
+            <li><a href="#seaborn"><i class="fas fa-palette"></i> Seaborn</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book"></i> Guide Complet - NumPy, Pandas, Matplotlib & Seaborn</h1>
+            <p>Documentation technique pour maîtriser les calculs numériques et la visualisation de données</p>
+
+            
+        </header>
+
+        <div class="content">
+            <!-- Barre de recherche -->
+            <div class="search-container" id="searchContainer">
+                <input type="text" class="search-input" id="searchInput" placeholder="Rechercher... (NumPy, Pandas, plot, groupby, etc.)" aria-label="Champ de recherche">
+            </div>
+
+            <!-- ===== NUMPY ===== -->
+            <div class="section" id="numpy">
+                <h2><i class="fas fa-calculator"></i> NumPy - Calcul numérique & Tableaux</h2>
+                
+                <div class="library-intro">
+                    <strong><i class="fas fa-thumbtack"></i> À propos de NumPy :</strong> NumPy est utilisé pour les calculs mathématiques rapides sur des blocs de données du même type.
+                </div>
+
+                <div class="callout callout-info">
+                    <div class="callout-icon"><i class="fas fa-info-circle"></i></div>
+                    <div class="callout-content">
+                        <strong>Conseil</strong>
+                        NumPy est 100x plus rapide qu'une boucle Python classique. Utilisez-le pour toutes vos opérations mathématiques.
+                    </div>
+                </div>
+
+                <div class="callout callout-warning">
+                    <div class="callout-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="callout-content">
+                        <strong>Attention</strong>
+                        Les indices NumPy commencent à 0 (pas à 1). <code>np.arange(0, 10)</code> produit [0,1,2...9] (pas 10).
+                    </div>
+                </div>
+
+                <!-- Création de tableaux -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                        <span class="badge badge-intermediate">Fréquent</span>
+                    </div>
+                    <h3>1. Création de Tableaux (Arrays)</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">np.array([1, 2, 3])</div>
+                        <div class="explanation">→ Crée un tableau à partir d'une liste</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.zeros(10)</div>
+                        <div class="explanation">→ Crée un tableau rempli de zéros (10 éléments)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.ones((3, 3))</div>
+                        <div class="explanation">→ Crée une matrice 3x3 remplie de uns</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.arange(0, 10, 2)</div>
+                        <div class="explanation">→ Crée une suite de nombres de 0 à 9 par pas de 2<br/>→ Résultat : [0, 2, 4, 6, 8]</div>
+                    </div>
+                </div>
+
+                <!-- Statistiques -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                        <span class="badge badge-intermediate">Essentiel</span>
+                    </div>
+                    <h3>2. Statistiques de Base</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">np.mean(array)</div>
+                        <div class="explanation">→ Calcule la moyenne des éléments du tableau</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.max(array)</div>
+                        <div class="explanation">→ Retourne la valeur maximale</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.min(array)</div>
+                        <div class="explanation">→ Retourne la valeur minimale</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.sum(array)</div>
+                        <div class="explanation">→ Calcule la somme de tous les éléments</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.std(array)</div>
+                        <div class="explanation">→ Calcule l'écart-type</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.ptp(array)</div>
+                        <div class="explanation">→ Calcule l'amplitude thermique (Peak-To-Peak = Max - Min)</div>
+                    </div>
+                </div>
+
+                <!-- Manipulation & Filtrage -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-intermediate">Important</span>
+                        <span class="badge badge-advanced">Avancé</span>
+                    </div>
+                    <h3>3. Manipulation & Filtrage</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">array[array > 10]</div>
+                        <div class="explanation">→ Isole les valeurs supérieures à 10</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.sum(array < 0)</div>
+                        <div class="explanation">→ Compte le nombre de valeurs négatives</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">np.round(array, 2)</div>
+                        <div class="explanation">→ Arrondit les valeurs à 2 décimales</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PANDAS ===== -->
+            <div class="section" id="pandas">
+                <h2><i class="fas fa-database"></i> Pandas - Manipulation de Tableaux/Données</h2>
+                
+                <div class="library-intro">
+                    <strong><i class="fas fa-thumbtack"></i> À propos de Pandas :</strong> Pandas est parfait pour structurer, nettoyer et analyser des données tabulaires (comme Excel).
+                </div>
+
+                <div class="callout callout-success">
+                    <div class="callout-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="callout-content">
+                        <strong>Bonne pratique</strong>
+                        Toujours commencer par <code>df.info()</code> et <code>df.describe()</code> pour comprendre vos données avant de les analyser.
+                    </div>
+                </div>
+
+                <div class="callout callout-warning">
+                    <div class="callout-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="callout-content">
+                        <strong>Attention</strong>
+                        Les modifications sur un DataFrame ne s'appliquent pas in-place par défaut. Utilisez <code>inplace=True</code> ou réassignez : <code>df = df.dropna()</code>
+                    </div>
+                </div>
+
+                <!-- Création et Chargement -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                    </div>
+                    <h3>1. Création et Chargement</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">pd.DataFrame(data)</div>
+                        <div class="explanation">→ Crée un DataFrame à partir d'un dictionnaire</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df = pd.read_csv('fichier.csv')</div>
+                        <div class="explanation">→ Lit un fichier CSV</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df = pd.read_excel('fichier.xlsx')</div>
+                        <div class="explanation">→ Lit un fichier Excel</div>
+                    </div>
+                </div>
+
+                <!-- Inspection -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                        <span class="badge badge-intermediate">Essentiel</span>
+                    </div>
+                    <h3>2. Inspection des Données</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">df.head(n)</div>
+                        <div class="explanation">→ Affiche les n premières lignes du DataFrame</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.info()</div>
+                        <div class="explanation">→ Affiche les informations du tableau (types de colonnes, valeurs manquantes, etc.)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.describe()</div>
+                        <div class="explanation">→ Affiche les statistiques rapides (moyenne, min, max de toutes les colonnes numériques)</div>
+                    </div>
+                </div>
+
+                <!-- Sélection & Filtrage -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                        <span class="badge badge-intermediate">Très fréquent</span>
+                    </div>
+                    <h3>3. Sélection & Filtrage</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">df['Nom_Colonne']</div>
+                        <div class="explanation">→ Sélectionne une colonne spécifique</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df[df['Vente'] > 1500]</div>
+                        <div class="explanation">→ Filtre les lignes où la colonne 'Vente' est supérieure à 1500</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.loc[df['Benefice'].idxmax()]</div>
+                        <div class="explanation">→ Retourne la ligne qui contient le bénéfice maximal</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.loc[ligne, colonne]</div>
+                        <div class="explanation">→ Accès à une cellule spécifique par ligne et colonne</div>
+                    </div>
+                </div>
+
+                <!-- Calculs & Groupements -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-intermediate">Important</span>
+                        <span class="badge badge-advanced">Avancé</span>
+                    </div>
+                    <h3>4. Calculs & Groupements</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">df['Total'] = df['A'] + df['B']</div>
+                        <div class="explanation">→ Crée une colonne calculée 'Total' (somme de A et B)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df['Vente'].sum()</div>
+                        <div class="explanation">→ Calcule la somme de la colonne 'Vente'</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df['Vente'].mean()</div>
+                        <div class="explanation">→ Calcule la moyenne de la colonne 'Vente'</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.groupby('Categorie')['Vente'].sum()</div>
+                        <div class="explanation">→ Groupe par catégorie et calcule la somme des ventes par groupe</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.sort_values(by='Vente', ascending=False)</div>
+                        <div class="explanation">→ Trie les données par la colonne 'Vente' en ordre décroissant</div>
+                    </div>
+                </div>
+
+                <!-- Nettoyage -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-intermediate">Critique</span>
+                        <span class="badge badge-advanced">Compétence clé</span>
+                    </div>
+                    <h3>5. Nettoyage (Data Cleaning)</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">df.dropna()</div>
+                        <div class="explanation">→ Supprime les lignes contenant des valeurs vides (NaN)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.fillna(0)</div>
+                        <div class="explanation">→ Remplace les valeurs vides par 0</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">pd.to_datetime(df['Date'])</div>
+                        <div class="explanation">→ Convertit la colonne 'Date' en format datetime</div>
+                    </div>
+                </div>
+
+                <!-- Syntaxes Avancées Pandas -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-advanced">Avancé</span>
+                        <span class="badge badge-advanced">Puissant</span>
+                    </div>
+                    <h3>6. Syntaxes Avancées : Analyse & Nettoyage</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">df.isna() / df.isnull()</div>
+                        <div class="explanation">→ Retourne un booléen pour chaque valeur manquante (NaN)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.isnull().sum()</div>
+                        <div class="explanation">→ Compte le nombre de valeurs manquantes par colonne</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.dropna(subset=['Colonne1', 'Colonne2'])</div>
+                        <div class="explanation">→ Supprime les lignes où certaines colonnes sont NaN</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.fillna(method='ffill')</div>
+                        <div class="explanation">→ Remplit les NaN avec la valeur précédente (forward fill)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df['Colonne'].duplicated().sum()</div>
+                        <div class="explanation">→ Compte le nombre de doublons dans une colonne</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.drop_duplicates(subset=['Colonne'], keep='first')</div>
+                        <div class="explanation">→ Supprime les doublons en gardant la première occurrence</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df['Colonne'].str.replace('ancien', 'nouveau')</div>
+                        <div class="explanation">→ Remplace du texte dans les valeurs de colonne (texte)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df['Colonne'].str.upper() / df['Colonne'].str.lower()</div>
+                        <div class="explanation">→ Convertit le texte en majuscules/minuscules</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df['Colonne'].str.strip()</div>
+                        <div class="explanation">→ Supprime les espaces au début et fin du texte</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df['Colonne'].astype(int) / df['Colonne'].astype(str)</div>
+                        <div class="explanation">→ Convertit le type de données (int, float, str, etc.)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.apply(lambda x: x * 2)</div>
+                        <div class="explanation">→ Applique une fonction personnalisée à chaque ligne/colonne</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.groupby(['Cat1', 'Cat2'])['Vente'].agg(['sum', 'mean', 'count'])</div>
+                        <div class="explanation">→ Agrégation multiple par groupes (plusieurs fonctions)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.pivot_table(values='Vente', index='Mois', columns='Region', aggfunc='sum')</div>
+                        <div class="explanation">→ Crée un tableau croisé dynamique (pivot)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.merge(df2, on='Clé', how='left')</div>
+                        <div class="explanation">→ Fusionne deux DataFrames (inner, left, right, outer)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df[df['Colonne'].isin(['A', 'B', 'C'])]</div>
+                        <div class="explanation">→ Filtre les lignes où Colonne est dans une liste</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.query('Age > 30 and Ville == \"Paris\"')</div>
+                        <div class="explanation">→ Filtre avec syntaxe SQL-like (plus lisible)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.rename(columns={'Ancien': 'Nouveau'})</div>
+                        <div class="explanation">→ Renomme les colonnes du DataFrame</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.drop(['Colonne1', 'Colonne2'], axis=1)</div>
+                        <div class="explanation">→ Supprime des colonnes (axis=1 pour colonnes, 0 pour lignes)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.reset_index(drop=True)</div>
+                        <div class="explanation">→ Réinitialise l'index après filtrage/suppression</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.sort_values(by=['Col1', 'Col2'], ascending=[True, False])</div>
+                        <div class="explanation">→ Trie par plusieurs colonnes avec ordres différents</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df['Colonne'].value_counts()</div>
+                        <div class="explanation">→ Compte les occurrences uniques (fréquence)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.corr()</div>
+                        <div class="explanation">→ Calcule la matrice de corrélation entre colonnes numériques</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">pd.cut(df['Colonne'], bins=5)</div>
+                        <div class="explanation">→ Divise les données en intervalles (bins) pour discrétisation</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">df.to_csv('fichier.csv', index=False)</div>
+                        <div class="explanation">→ Exporte le DataFrame en CSV (json, excel, sql, etc.)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== MATPLOTLIB ===== -->
+            <div class="section" id="matplotlib">
+                <h2><i class="fas fa-chart-line"></i> Matplotlib - Visualisation des Données</h2>
+                
+                <div class="library-intro">
+                    <strong><i class="fas fa-thumbtack"></i> À propos de Matplotlib :</strong> Matplotlib est la bibliothèque de base pour créer des graphiques, des histogrammes et des visualisations statiques en Python.
+                </div>
+
+                <div class="callout callout-info">
+                    <div class="callout-icon"><i class="fas fa-info-circle"></i></div>
+                    <div class="callout-content">
+                        <strong>Conseil</strong>
+                        Pour des graphiques plus beaux et modernes, utilisez Seaborn qui est construit sur Matplotlib mais offre des styles par défaut supérieurs.
+                    </div>
+                </div>
+
+                <!-- Création de figures -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                        <span class="badge badge-intermediate">Essentiels</span>
+                    </div>
+                    <h3>1. Création de Figures et Subplots</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">import matplotlib.pyplot as plt</div>
+                        <div class="explanation">→ Importe la bibliothèque Matplotlib</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.figure(figsize=(10, 6))</div>
+                        <div class="explanation">→ Crée une figure avec taille 10x6 pouces</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">fig, ax = plt.subplots(2, 2)</div>
+                        <div class="explanation">→ Crée une grille 2x2 de subplots (4 graphiques)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.subplot(2, 3, 1)</div>
+                        <div class="explanation">→ Sélectionne le subplot 1 dans une grille 2x3</div>
+                    </div>
+                </div>
+
+                <!-- Types de graphiques -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                        <span class="badge badge-intermediate">Très fréquent</span>
+                    </div>
+                    <h3>2. Tracer des Graphiques (Plots)</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">plt.plot(x, y)</div>
+                        <div class="explanation">→ Trace une courbe linéaire</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.scatter(x, y)</div>
+                        <div class="explanation">→ Trace un nuage de points (scatter plot)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.bar(categories, values)</div>
+                        <div class="explanation">→ Crée un diagramme en barres</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.hist(data, bins=20)</div>
+                        <div class="explanation">→ Crée un histogramme avec 20 barres</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.pie(values, labels=labels)</div>
+                        <div class="explanation">→ Crée un diagramme circulaire (pie chart)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.boxplot(data)</div>
+                        <div class="explanation">→ Crée un diagramme en boîte (box plot)</div>
+                    </div>
+                </div>
+
+                <!-- Personnalisation -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-intermediate">Important</span>
+                    </div>
+                    <h3>3. Personnalisation des Graphiques</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">plt.title('Titre du graphique')</div>
+                        <div class="explanation">→ Ajoute un titre au graphique</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.xlabel('Axe X') / plt.ylabel('Axe Y')</div>
+                        <div class="explanation">→ Ajoute les étiquettes des axes X et Y</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.legend()</div>
+                        <div class="explanation">→ Affiche la légende du graphique</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.grid(True)</div>
+                        <div class="explanation">→ Ajoute une grille de fond</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.xlim(0, 100) / plt.ylim(0, 50)</div>
+                        <div class="explanation">→ Définit les limites des axes X et Y</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.xticks(rotation=45)</div>
+                        <div class="explanation">→ Fait pivoter les étiquettes de l'axe X de 45°</div>
+                    </div>
+                </div>
+
+                <!-- Style et couleurs -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-intermediate">Important</span>
+                    </div>
+                    <h3>4. Style et Couleurs</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">plt.plot(x, y, color='red', linewidth=2)</div>
+                        <div class="explanation">→ Trace une ligne rouge d'épaisseur 2</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.scatter(x, y, s=100, alpha=0.5)</div>
+                        <div class="explanation">→ Trace des points avec transparence (alpha=0.5)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.style.use('seaborn')</div>
+                        <div class="explanation">→ Applique le style 'seaborn' à tous les graphiques</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.rcParams['figure.figsize'] = (12, 8)</div>
+                        <div class="explanation">→ Définit la taille par défaut des figures</div>
+                    </div>
+                </div>
+
+                <!-- Affichage et sauvegarde -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                    </div>
+                    <h3>5. Affichage et Sauvegarde</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">plt.show()</div>
+                        <div class="explanation">→ Affiche le graphique dans une fenêtre</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.savefig('graphique.png')</div>
+                        <div class="explanation">→ Sauvegarde le graphique en PNG</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.savefig('graphique.pdf', dpi=300)</div>
+                        <div class="explanation">→ Sauvegarde en PDF avec haute résolution (300 dpi)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.tight_layout()</div>
+                        <div class="explanation">→ Ajuste automatiquement l'espacement des subplots</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.close()</div>
+                        <div class="explanation">→ Ferme la figure actuelle (libère la mémoire)</div>
+                    </div>
+                </div>
+
+                <!-- Syntaxes Avancées -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-advanced">Avancé</span>
+                    </div>
+                    <h3>6. Syntaxes Avancées et Utiles</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">plt.text(x, y, 'Texte')</div>
+                        <div class="explanation">→ Ajoute du texte à une position (x, y) du graphique</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.annotate('Label', xy=(x, y), xytext=(x+10, y+10))</div>
+                        <div class="explanation">→ Ajoute une annotation avec flèche pointant vers (x, y)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">ax.axhline(y=10, color='red', linestyle='--')</div>
+                        <div class="explanation">→ Ajoute une ligne horizontale à y=10 (pointillée rouge)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">ax.axvline(x=5, color='blue', linestyle=':')</div>
+                        <div class="explanation">→ Ajoute une ligne verticale à x=5 (pointée bleu)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.plot(x, y, marker='o', linestyle='-', linewidth=2)</div>
+                        <div class="explanation">→ Personnalise marqueurs, style et épaisseur de ligne</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">ax.fill_between(x, y1, y2, alpha=0.3, color='cyan')</div>
+                        <div class="explanation">→ Remplit l'area entre deux courbes avec transparence</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.colorbar(im)</div>
+                        <div class="explanation">→ Ajoute une barre de couleur pour les images/heatmap</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">ax.set_xscale('log')</div>
+                        <div class="explanation">→ Utilise une échelle logarithmique pour l'axe X (ou 'linear')</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">fig.suptitle('Titre global')</div>
+                        <div class="explanation">→ Ajoute un super-titre pour toute la figure</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">ax.invert_xaxis() / ax.invert_yaxis()</div>
+                        <div class="explanation">→ Inverse l'ordre des valeurs sur l'axe X ou Y</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SEABORN ===== -->
+            <div class="section" id="seaborn">
+                <h2><i class="fas fa-palette"></i> Seaborn - Visualisation Statistique</h2>
+                
+                <div class="library-intro">
+                    <strong><i class="fas fa-thumbtack"></i> À propos de Seaborn :</strong> Seaborn est construite sur Matplotlib et offre des graphiques statistiques plus complexes et esthétiques. Elle s'intègre parfaitement avec Pandas.
+                </div>
+
+                <div class="callout callout-success">
+                    <div class="callout-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="callout-content">
+                        <strong>Bonne pratique</strong>
+                        Combinez Seaborn avec Pandas DataFrames pour une workflow optimale : <code>sns.scatterplot(data=df, x='col1', y='col2')</code>
+                    </div>
+                </div>
+
+                <!-- Chargement et configuration -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                    </div>
+                    <h3>1. Chargement et Configuration</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">import seaborn as sns</div>
+                        <div class="explanation">→ Importe la bibliothèque Seaborn</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.set_theme(style='darkgrid')</div>
+                        <div class="explanation">→ Définit le style global ('darkgrid', 'whitegrid', 'dark', 'white')</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.set_palette('husl')</div>
+                        <div class="explanation">→ Définit la palette de couleurs</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.color_palette()</div>
+                        <div class="explanation">→ Affiche la palette de couleurs actuelle</div>
+                    </div>
+                </div>
+
+                <!-- Graphiques statistiques -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-beginner">Débutant</span>
+                        <span class="badge badge-intermediate">Très utile</span>
+                    </div>
+                    <h3>2. Graphiques Statistiques</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y')</div>
+                        <div class="explanation">→ Crée un nuage de points avec options statistiques</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.lineplot(data=df, x='X', y='Y')</div>
+                        <div class="explanation">→ Trace une courbe linéaire avec intervalle de confiance</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.barplot(data=df, x='Categorie', y='Vente')</div>
+                        <div class="explanation">→ Crée un diagramme en barres avec moyennes estimées</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.countplot(data=df, x='Categorie')</div>
+                        <div class="explanation">→ Compte et affiche la fréquence de chaque catégorie</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.boxplot(data=df, x='Categorie', y='Valeur')</div>
+                        <div class="explanation">→ Crée des diagrammes en boîte pour comparer distributions</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.violinplot(data=df, x='Categorie', y='Valeur')</div>
+                        <div class="explanation">→ Crée un graphique en violon (distribution détaillée)</div>
+                    </div>
+                </div>
+
+                <!-- Distributions -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-intermediate">Important</span>
+                    </div>
+                    <h3>3. Graphiques de Distribution</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">sns.histplot(data=df, x='Colonne', bins=20)</div>
+                        <div class="explanation">→ Crée un histogramme avec 20 barres</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.kdeplot(data=df, x='Colonne')</div>
+                        <div class="explanation">→ Crée une courbe de densité (estimateur à noyau)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.distplot(data, kde=True)</div>
+                        <div class="explanation">→ Combine histogramme et courbe de densité</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.ecdfplot(data=df, x='Colonne')</div>
+                        <div class="explanation">→ Trace la fonction de répartition empirique (ECDF)</div>
+                    </div>
+                </div>
+
+                <!-- Matrices et corrélations -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-intermediate">Important</span>
+                        <span class="badge badge-advanced">Puissant</span>
+                    </div>
+                    <h3>4. Matrices et Corrélations</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">sns.heatmap(correlation_matrix, annot=True)</div>
+                        <div class="explanation">→ Affiche une matrice de chaleur avec valeurs (corrélations, etc.)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.clustermap(data)</div>
+                        <div class="explanation">→ Crée une heatmap avec clustering hiérarchique</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">corr = df.corr(); sns.heatmap(corr, annot=True, cmap='coolwarm')</div>
+                        <div class="explanation">→ Affiche les corrélations entre colonnes avec colormap</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.pairplot(df)</div>
+                        <div class="explanation">→ Crée une matrice de graphiques pour toutes les paires de colonnes</div>
+                    </div>
+                </div>
+
+                <!-- Graphiques avancés -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-advanced">Avancé</span>
+                    </div>
+                    <h3>5. Graphiques Avancés</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">sns.jointplot(data=df, x='X', y='Y', kind='hex')</div>
+                        <div class="explanation">→ Combine 1D et 2D (scatter, kde, hist, hex, regression)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.regplot(data=df, x='X', y='Y')</div>
+                        <div class="explanation">→ Trace une courbe de régression linéaire</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.lmplot(data=df, x='X', y='Y', hue='Categorie')</div>
+                        <div class="explanation">→ Régression linéaire avec plusieurs groupes (par couleur)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.stripplot(data=df, x='X', y='Y')</div>
+                        <div class="explanation">→ Affiche tous les points individuels (scatter simple)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.swarmplot(data=df, x='Categorie', y='Valeur')</div>
+                        <div class="explanation">→ Affiche tous les points en évitant les chevauchements</div>
+                    </div>
+                </div>
+
+                <!-- Personnalisation et sauvegarde -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-intermediate">Important</span>
+                    </div>
+                    <h3>6. Personnalisation et Sauvegarde</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">plt.title('Titre'); plt.xlabel('X'); plt.ylabel('Y')</div>
+                        <div class="explanation">→ Ajoute titre et étiquettes (fonctionne avec Seaborn)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.set_context('poster')</div>
+                        <div class="explanation">→ Définit la taille des éléments ('paper', 'notebook', 'talk', 'poster')</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">g = sns.FacetGrid(df, col='Categorie')</div>
+                        <div class="explanation">→ Crée une grille de graphiques facettisés par colonne</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">g.map(plt.scatter, 'X', 'Y')</div>
+                        <div class="explanation">→ Applique une fonction à chaque facette de la grille</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">plt.savefig('graphique_seaborn.png', dpi=300, bbox_inches='tight')</div>
+                        <div class="explanation">→ Sauvegarde avec résolution haute et ajustement automatique</div>
+                    </div>
+                </div>
+
+                <!-- Syntaxes Avancées Seaborn -->
+                <div class="subsection">
+                    <div>
+                        <span class="badge badge-advanced">Avancé</span>
+                        <span class="badge badge-advanced">Puissant</span>
+                    </div>
+                    <h3>7. Syntaxes Avancées et Paramétrages Utiles</h3>
+                    
+                    <div class="code-item">
+                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y', hue='Categorie')</div>
+                        <div class="explanation">→ Colore les points par catégorie (hue = teinte/couleur)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y', hue='Cat1', style='Cat2')</div>
+                        <div class="explanation">→ Utilise couleurs pour Cat1 et styles de marqueurs pour Cat2</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y', size='Valeur')</div>
+                        <div class="explanation">→ Varie la taille des points selon Valeur</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.barplot(data=df, x='X', y='Y', hue_order=['A', 'B', 'C'])</div>
+                        <div class="explanation">→ Définit l'ordre d'affichage des catégories</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y', palette='Set2')</div>
+                        <div class="explanation">→ Utilise une palette nommée (Set1, Set2, husl, dark, pastel...)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.relplot(data=df, x='X', y='Y', hue='Cat', col='Type')</div>
+                        <div class="explanation">→ Crée plusieurs graphiques facettisés par colonne (figure-level)</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.catplot(data=df, x='X', y='Y', kind='violin', hue='Cat')</div>
+                        <div class="explanation">→ Fonction figure-level pour graphiques catégoriques</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.displot(data=df, x='Colonne', kde=True, hue='Categorie')</div>
+                        <div class="explanation">→ Figure-level pour distributions avec plusieurs groupes</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.heatmap(corr, cmap='coolwarm', fmt='.2f', cbar=True)</div>
+                        <div class="explanation">→ Heatmap avec colormap personnalisée et format des nombres</div>
+                    </div>
+
+                    <div class="code-item">
+                        <div class="code-line">sns.boxplot(data=df, x='Cat', y='Val', dodge=False)</div>
+                        <div class="explanation">→ dodge=False superpose les boîtes au lieu de les côte à côte</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><i class="fas fa-book"></i> Guide de Référence Technique - NumPy, Pandas, Matplotlib & Seaborn</p>
+        </footer>
+    </div>
+
+    <script>
+        // ===== MODE SOMBRE =====
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const savedTheme = localStorage.getItem('theme') || 'light';
+
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDark = body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        });
+
+        // ===== BARRE DE PROGRESSION =====
+        const progressBar = document.getElementById('progressBar');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            progressBar.style.width = scrollPercent + '%';
+        });
+
+        // ===== BOUTON HAUT DE PAGE =====
+        const scrollTop = document.getElementById('scrollTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        scrollTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ===== RECHERCHE ET FILTRAGE =====
+        const searchToggle = document.getElementById('searchToggle');
+        const searchContainer = document.getElementById('searchContainer');
+        const searchInput = document.getElementById('searchInput');
+
+        searchToggle.addEventListener('click', () => {
+            searchContainer.classList.toggle('active');
+            if (searchContainer.classList.contains('active')) {
+                searchInput.focus();
+            }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const sections = document.querySelectorAll('.section');
+
+            if (query.trim() === '') {
+                sections.forEach(section => section.style.display = 'block');
+                document.querySelectorAll('.code-item').forEach(item => item.style.display = 'block');
+                return;
+            }
+
+            sections.forEach(section => {
+                const text = section.textContent.toLowerCase();
+                const hasMatch = text.includes(query);
+                
+                section.style.display = hasMatch ? 'block' : 'none';
+                
+                // Afficher/cacher les éléments de code individuellement
+                section.querySelectorAll('.code-item').forEach(item => {
+                    const itemText = item.textContent.toLowerCase();
+                    item.style.display = itemText.includes(query) ? 'block' : 'none';
+                });
+            });
+        });
+
+        // Fermer la recherche avec Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                searchContainer.classList.remove('active');
+            }
+        });
+
+        // ===== TABLE OF CONTENTS =====
+        const tocToggle = document.getElementById('tocToggle');
+        const tocSidebar = document.getElementById('tocSidebar');
+        const tocOverlay = document.getElementById('tocOverlay');
+        const tocLinks = document.querySelectorAll('.toc-items a');
+
+        tocToggle.addEventListener('click', () => {
+            tocSidebar.classList.toggle('active');
+            tocOverlay.classList.toggle('active');
+        });
+
+        tocOverlay.addEventListener('click', () => {
+            tocSidebar.classList.remove('active');
+            tocOverlay.classList.remove('active');
+        });
+
+        // ===== INDICATEUR DE SECTION ACTIVE DANS TOC =====
+        function updateActiveTocLink() {
+            const sections = document.querySelectorAll('.section');
+            const scrollPosition = window.scrollY + 100;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionBottom = sectionTop + section.offsetHeight;
+
+                if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                    const sectionId = section.id;
+                    
+                    tocLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${sectionId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveTocLink);
+        updateActiveTocLink(); // Appelé au chargement
+
+        tocLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                tocSidebar.classList.remove('active');
+                tocOverlay.classList.remove('active');
+                
+                const sectionId = link.getAttribute('href').substring(1);
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ===== ANIMATIONS AU CHARGEMENT =====
+        window.addEventListener('load', () => {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // ===== SMOOTH SCROLL =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ===== COPIE DE CODE =====
+        const codeItems = document.querySelectorAll('.code-item');
+        codeItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const codeLine = item.querySelector('.code-line');
+                if (codeLine) {
+                    const text = codeLine.textContent;
+                    navigator.clipboard.writeText(text);
+                    
+                    const originalText = item.innerHTML;
+                    item.style.background = 'rgba(76, 175, 80, 0.1)';
+                    item.innerHTML = '<i class="fas fa-check" style="color: #4caf50; margin-right: 10px;"></i> Copié !';
+                    
+                    setTimeout(() => {
+                        item.style.background = '';
+                        item.innerHTML = originalText;
+                    }, 1500);
+                }
+            });
+        });
+
+        // ===== CLAVIER ACCESSIBLE =====
+        // Ajouter focus visible pour l'accessibilité
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/') {
+                e.preventDefault();
+                searchContainer.classList.toggle('active');
+                searchInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>

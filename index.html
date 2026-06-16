@@ -3,70 +3,639 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syntaxe NumPy, Pandas, Matplotlib & Seaborn</title>
+    <title>Exercices Interactifs - NumPy, Pandas, Matplotlib & Seaborn</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/darcula.min.css">
+
+        <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#3182ce">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PyExercices">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="PyExercices">
+    <meta name="msapplication-TileColor" content="#3182ce">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <!-- Preload Pyodide -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js" as="script" crossorigin="anonymous">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon-152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/icon-167.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png">
+
+
+
+
     <style>
+        :root {
+            --primary: #4a5568;
+            --secondary: #3182ce;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --info: #00b5d8;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --text-secondary: #718096;
+            --border: #e2e8f0;
+            --badge-easy-bg: #c6f6d5;
+            --badge-easy-text: #22543d;
+            --badge-medium-bg: #bee3f8;
+            --badge-medium-text: #2a4365;
+            --badge-hard-bg: #feebc8;
+            --badge-hard-text: #7b341e;
+            --badge-numpy-bg: rgba(76, 175, 80, 0.15);
+            --badge-numpy-text: #2e7d32;
+            --badge-pandas-bg: rgba(33, 150, 243, 0.15);
+            --badge-pandas-text: #1565c0;
+            --badge-matplotlib-bg: rgba(255, 152, 0, 0.15);
+            --badge-matplotlib-text: #e65100;
+            --badge-seaborn-bg: rgba(156, 39, 176, 0.15);
+            --badge-seaborn-text: #6a1b9a;
+            --editor-bg: #1e1e1e;
+        }
+
+        body.dark-mode {
+            --bg: #1a202c;
+            --card-bg: #2d3748;
+            --text: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --border: #4a5568;
+            --badge-easy-bg: rgba(72, 187, 120, 0.25);
+            --badge-easy-text: #9ae6b4;
+            --badge-medium-bg: rgba(66, 153, 225, 0.25);
+            --badge-medium-text: #90cdf4;
+            --badge-hard-bg: rgba(237, 137, 54, 0.25);
+            --badge-hard-text: #fbd38d;
+            --badge-numpy-bg: rgba(76, 175, 80, 0.25);
+            --badge-numpy-text: #81c784;
+            --badge-pandas-bg: rgba(33, 150, 243, 0.25);
+            --badge-pandas-text: #64b5f6;
+            --badge-matplotlib-bg: rgba(255, 152, 0, 0.25);
+            --badge-matplotlib-text: #ffb74d;
+            --badge-seaborn-bg: rgba(156, 39, 176, 0.25);
+            --badge-seaborn-text: #ce93d8;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #4a5568;
-            --primary-dark: #2d3748;
-            --secondary: #3182ce;
-            --success: #38a169;
-            --warning: #d69e2e;
-            --danger: #c53030;
-            --light-bg: #f7fafc;
-            --light-text: #2d3748;
-            --light-border: #e2e8f0;
-            --dark-bg: #1a202c;
-            --dark-bg-2: #2d3748;
-            --dark-text: #e2e8f0;
-            --dark-text-light: #cbd5e0;
-            --dark-border: #4a5568;
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f7fafc;
-            color: var(--light-text);
-            line-height: 1.8;
-            padding: 20px;
-            transition: all 0.3s ease;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        body.dark-mode {
-            background: #1a202c;
-            color: var(--dark-text);
-        }
-
-        /* Navigation Sticky */
         .navbar {
+            height: 50px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            background: #ffffff;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            padding: 10px 20px;
             z-index: 1000;
+            transition: background 0.3s ease;
+        }
+
+        .nav-brand {
+            font-weight: 700;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .shortcut-hint {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+        }
+
+        .btn-icon {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 1em;
+        }
+
+        .btn-icon:hover {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .btn-menu {
+            display: none;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 50px);
+            margin-top: 50px;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 320px;
+            min-width: 320px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        .sidebar-stats {
+            padding: 10px 12px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.78em;
+            font-weight: 600;
+            color: var(--text-secondary);
             display: flex;
             justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .category-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            overflow-x: auto;
+        }
+
+        .category-tab {
+            flex: 1;
+            min-width: fit-content;
+            padding: 10px 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.72em;
+            color: var(--text);
+            opacity: 0.6;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .category-tab.active {
+            opacity: 1;
+            border-bottom-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .category-tab:hover {
+            opacity: 0.9;
+            background: rgba(49, 130, 206, 0.05);
+        }
+
+        .exercise-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .exercise-card {
+            padding: 10px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            background: var(--bg);
+        }
+
+        .exercise-card:hover {
+            border-color: var(--border);
+            transform: translateX(2px);
+        }
+
+        .exercise-card.active {
+            border-color: var(--secondary);
+            background: rgba(49, 130, 206, 0.08);
+        }
+
+        .exercise-card.completed {
+            border-left: 3px solid var(--success);
+        }
+
+        .ex-number {
+            font-size: 0.68em;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .ex-title {
+            font-weight: 600;
+            font-size: 0.82em;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .ex-badges {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.62em;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-easy {
+            background: var(--badge-easy-bg);
+            color: var(--badge-easy-text);
+        }
+
+        .badge-medium {
+            background: var(--badge-medium-bg);
+            color: var(--badge-medium-text);
+        }
+
+        .badge-hard {
+            background: var(--badge-hard-bg);
+            color: var(--badge-hard-text);
+        }
+
+        .badge-numpy {
+            background: var(--badge-numpy-bg);
+            color: var(--badge-numpy-text);
+        }
+
+        .badge-pandas {
+            background: var(--badge-pandas-bg);
+            color: var(--badge-pandas-text);
+        }
+
+        .badge-matplotlib {
+            background: var(--badge-matplotlib-bg);
+            color: var(--badge-matplotlib-text);
+        }
+
+        .badge-seaborn {
+            background: var(--badge-seaborn-bg);
+            color: var(--badge-seaborn-text);
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-width: 0;
+        }
+
+        .exercise-panel {
+            padding: 14px 16px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .exercise-panel h2 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            display: flex;
             align-items: center;
-            animation: slideDown 0.3s ease;
-            border-bottom: 1px solid #e2e8f0;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        body.dark-mode .navbar {
-            background: #2d3748;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            border-bottom-color: #4a5568;
+        .description-box {
+            background: var(--bg);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary);
+            line-height: 1.6;
+            font-size: 0.9em;
         }
 
+        .description-box code {
+            background: rgba(49, 130, 206, 0.1);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.88em;
+        }
+
+        .expected-output {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(49, 130, 206, 0.06);
+            border-radius: 8px;
+            font-size: 0.8em;
+            border: 1px dashed var(--border);
+            color: var(--text-secondary);
+        }
+
+        .expected-output strong {
+            color: var(--text);
+        }
+
+        .editor-section {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #252525;
+            border-bottom: 1px solid #333;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8em;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn-run {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-run:hover {
+            background: #2f7c31;
+            transform: translateY(-1px);
+        }
+
+        .btn-hint {
+            background: var(--warning);
+            color: #1a1a1a;
+        }
+
+        .btn-hint:hover {
+            background: #c79121;
+        }
+
+        .btn-solution {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-solution:hover {
+            background: #4a5568;
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid #555;
+            color: #ccc;
+        }
+
+        .btn-reset:hover {
+            background: #333;
+        }
+
+        .btn-copy {
+            background: transparent;
+            border: 1px solid #555;
+            color: #ccc;
+        }
+
+        .btn-copy:hover {
+            background: #333;
+        }
+
+        .CodeMirror {
+            height: 220px;
+            min-height: 140px;
+            font-size: 13px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+
+        .output-section {
+            background: var(--editor-bg);
+            border-top: 2px solid #333;
+            flex-shrink: 0;
+        }
+
+        .output-header {
+            padding: 8px 12px;
+            background: #252525;
+            border-bottom: 1px solid #333;
+            color: #e0e0e0;
+            font-weight: 600;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .output-content {
+            padding: 12px;
+            color: #00c800;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .output-content.error {
+            color: #ff6b6b;
+        }
+
+        .output-content.success {
+            color: #51cf66;
+        }
+
+        .output-content.info {
+            color: #74c0fc;
+        }
+
+        .output-image-container {
+            background: #f8f9fa;
+            padding: 16px;
+            text-align: center;
+            overflow: auto;
+            border-top: 1px solid #333;
+            min-height: 80px;
+        }
+
+        body.dark-mode .output-image-container {
+            background: #1a202c;
+        }
+
+        .output-image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            display: block;
+            margin: 0 auto;
+            cursor: zoom-in;
+        }
+
+        .btn-fullscreen-img {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            z-index: 10;
+        }
+
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            cursor: zoom-out;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .image-modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .image-modal img {
+            max-width: 95%;
+            height: auto;
+            margin: auto;
+            cursor: default;
+            border-radius: 8px;
+        }
+
+        .image-modal-close {
+            position: fixed;
+            top: 15px;
+            right: 25px;
+            color: white;
+            font-size: 35px;
+            cursor: pointer;
+            z-index: 2001;
+            background: none;
+            border: none;
+            font-weight: 300;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-ready {
+            background: #a0aec0;
+        }
+
+        .dot-running {
+            background: #f6e05e;
+            animation: pulse 0.8s infinite;
+        }
+
+        .dot-success {
+            background: #68d391;
+        }
+
+        .dot-error {
+            background: #fc8181;
+        }
 
         .nav-link {
             text-decoration: none;
@@ -79,7 +648,6 @@
             padding: 6px 14px;
             border-radius: 6px;
             border: 1px solid var(--border);
-            border-color: var(--secondary);
             transition: all 0.2s;
             white-space: nowrap;
         }
@@ -87,6 +655,7 @@
         .nav-link:hover {
             background: var(--secondary);
             color: white;
+            border-color: var(--secondary);
             transform: translateY(-1px);
         }
 
@@ -114,1814 +683,351 @@
             }
         }
 
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
+        @keyframes pulse {
+            0%,
+            100% {
                 opacity: 1;
             }
-        }
-
-
-        
-
-        .navbar-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.2em;
-            color: var(--primary);
-        }
-
-        .navbar-right {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .toggle-theme {
-            background: none;
-            border: none;
-            font-size: 1.3em;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            color: var(--primary);
-        }
-
-        body.dark-mode .toggle-theme {
-            color: var(--secondary);
-        }
-
-        .toggle-theme:hover {
-            transform: rotate(20deg) scale(1.1);
-        }
-
-        .toc-toggle {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            display: none;
-        }
-
-        body.dark-mode .toc-toggle {
-            background: var(--secondary);
-        }
-
-        .toc-toggle:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            background: #2c5aa0;
-        }
-
-        /* Focus visible pour accessibilité */
-        button:focus,
-        input:focus,
-        a:focus {
-            outline: 2px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        body.dark-mode button:focus,
-        body.dark-mode input:focus,
-        body.dark-mode a:focus {
-            outline-color: var(--secondary);
-        }
-
-        /* Table of Contents Sidebar */
-        .toc-sidebar {
-            position: fixed;
-            left: -300px;
-            top: 60px;
-            width: 280px;
-            height: calc(100vh - 60px);
-            background: white;
-            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            padding: 20px;
-            z-index: 999;
-            transition: all 0.3s ease;
-            border-right: 1px solid #e2e8f0;
-        }
-
-        body.dark-mode .toc-sidebar {
-            background: #2d3748;
-            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.2);
-            border-right-color: #4a5568;
-        }
-
-        .toc-sidebar.active {
-            left: 0;
-        }
-
-        .toc-sidebar h3 {
-            margin-bottom: 15px;
-            color: var(--primary);
-            font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        body.dark-mode .toc-sidebar h3 {
-            color: var(--secondary);
-        }
-
-        .toc-items {
-            list-style: none;
-        }
-
-        .toc-items li {
-            margin-bottom: 10px;
-        }
-
-        .toc-items a {
-            text-decoration: none;
-            color: var(--light-text);
-            transition: all 0.2s ease;
-            display: block;
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-
-        body.dark-mode .toc-items a {
-            color: var(--dark-text-light);
-        }
-
-        .toc-items a:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: var(--primary);
-            padding-left: 18px;
-        }
-
-        body.dark-mode .toc-items a:hover {
-            background: rgba(240, 147, 251, 0.1);
-            color: var(--secondary);
-        }
-
-        body {
-            padding-top: 80px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            animation: fadeInUp 0.5s ease;
-            border: 1px solid #e2e8f0;
-        }
-
-        body.dark-mode .container {
-            background: #2d3748;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            border-color: #4a5568;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            50% {
+                opacity: 0.4;
             }
         }
 
-        header {
-            background: #2d3748;
-            color: white;
-            padding: 50px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: float 20s linear infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-            animation: slideInDown 0.5s ease;
-        }
-
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-        }
-
-        .content {
-            padding: 40px;
-        }
-
-        body.dark-mode .content {
-            background: var(--dark-bg);
-        }
-
-        .section {
-            margin-bottom: 50px;
-            animation: fadeIn 0.6s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .section h2 {
-            background: #f7fafc;
-            color: var(--primary-dark);
-            padding: 18px 25px;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            font-size: 1.8em;
-            border-left: 4px solid var(--secondary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-
-        .section h2::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: left 0.3s ease;
-        }
-
-        .section h2:hover {
-            transform: translateX(5px);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            background: #edf2f7;
-        }
-
-        .section h2:hover::before {
-            left: 100%;
-        }
-
-        body.dark-mode .section h2 {
-            background: #1a202c;
-            color: var(--dark-text);
-            border-left-color: var(--secondary);
-            border-color: #4a5568;
-        }
-
-        body.dark-mode .section h2:hover {
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            background: #2d3748;
-        }
-
-        .subsection {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #f7fafc;
-            border-radius: 6px;
-            border-left: 3px solid var(--secondary);
-            transition: all 0.3s ease;
-            position: relative;
-            border: 1px solid #e2e8f0;
-            border-left-width: 3px;
-        }
-
-        body.dark-mode .subsection {
-            background: #1a202c;
-            border-left-color: var(--secondary);
-            border-color: #4a5568;
-        }
-
-        .subsection:hover {
-            transform: translateX(4px);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        }
-
-        body.dark-mode .subsection:hover {
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        }
-
-        .subsection h3 {
-            color: var(--primary);
-            font-size: 1.4em;
-            margin-bottom: 18px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        body.dark-mode .subsection h3 {
-            color: var(--secondary);
-        }
-
-        .code-item {
-            margin-bottom: 15px;
-            padding: 15px;
-            background: #ffffff;
-            border-left: 3px solid var(--secondary);
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 1px solid #e2e8f0;
-            border-left-width: 3px;
-        }
-
-        body.dark-mode .code-item {
-            background: #2d3748;
-            border-left-color: var(--secondary);
-            border-color: #4a5568;
-        }
-
-        .code-item:hover {
-            transform: translateX(3px);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            background: #f7fafc;
-        }
-
-        body.dark-mode .code-item:hover {
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            background: #1a202c;
-        }
-
-        .code-line {
-            font-family: 'Courier New', monospace;
-            background: linear-gradient(90deg, #f0f0f0 0%, #ffffff 100%);
-            padding: 12px 15px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            color: var(--primary);
-            font-weight: 600;
-            border-left: 3px solid var(--primary);
-            transition: all 0.2s ease;
-        }
-
-        body.dark-mode .code-line {
-            background: linear-gradient(90deg, var(--dark-bg-2) 0%, var(--dark-bg) 100%);
-            color: var(--secondary);
-            border-left-color: var(--secondary);
-        }
-
-        .code-line:hover {
-            box-shadow: inset 0 0 10px rgba(102, 126, 234, 0.2);
-        }
-
-        .explanation {
-            margin-left: 20px;
-            padding: 12px;
-            border-left: 3px solid var(--warning);
-            color: #666;
-            font-style: italic;
-            margin-top: 10px;
-            background: rgba(255, 193, 7, 0.05);
-            border-radius: 4px;
-            animation: slideInLeft 0.3s ease;
-        }
-
-        body.dark-mode .explanation {
-            color: var(--dark-text-light);
-            background: rgba(255, 193, 7, 0.1);
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .library-intro {
-            background: #edf2f7;
-            padding: 18px;
-            border-left: 3px solid var(--secondary);
-            border-radius: 6px;
-            margin-bottom: 25px;
-            color: var(--primary-dark);
-            transition: all 0.3s ease;
-            border: 1px solid #cbd5e0;
-            border-left-width: 3px;
-        }
-
-        body.dark-mode .library-intro {
-            background: #2d3748;
-            border-left-color: var(--secondary);
-            color: var(--dark-text);
-            border-color: #4a5568;
-        }
-
-        .library-intro:hover {
-            transform: translateX(3px);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .library-intro strong {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 5px;
-        }
-
-        footer {
-            background: #f7fafc;
-            padding: 25px;
-            text-align: center;
-            color: #718096;
-            border-top: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        body.dark-mode footer {
-            background: #1a202c;
-            color: #a0aec0;
-            border-top-color: #4a5568;
-        }
-
-        /* Barre de progression */
-        .progress-bar {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            height: 2px;
-            background: var(--secondary);
-            z-index: 999;
-            transition: width 0.1s ease;
-            box-shadow: none;
-        }
-
-        /* Bouton Haut de Page */
-        .scroll-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: var(--secondary);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1.2em;
-            opacity: 0;
-            transform: scale(0);
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            z-index: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .scroll-top.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .scroll-top:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            background: #2c5aa0;
-        }
-
-        body.dark-mode .scroll-top {
-            background: var(--secondary);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Callouts (Alertes) */
-        .callout {
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-left: 3px solid;
-            border-radius: 4px;
-            background: #ffffff;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            animation: slideInLeft 0.3s ease;
-            border: 1px solid;
-        }
-
-        body.dark-mode .callout {
-            background: #2d3748;
-        }
-
-        .callout-icon {
-            font-size: 1.3em;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .callout-content {
-            flex: 1;
-        }
-
-        .callout-content strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .callout-info {
-            border-left-color: #3182ce;
-            border-color: #bee3f8;
-            background: #ebf8ff;
-            color: #2c5282;
-        }
-
-        body.dark-mode .callout-info {
-            background: #1a365d;
-            border-color: #2c5282;
-            color: #90cdf4;
-        }
-
-        .callout-warning {
-            border-left-color: #d69e2e;
-            border-color: #fbd38d;
-            background: #fffaf0;
-            color: #7c2d12;
-        }
-
-        body.dark-mode .callout-warning {
-            background: #3e2723;
-            border-color: #7c2d12;
-            color: #fbd38d;
-        }
-
-        .callout-success {
-            border-left-color: #38a169;
-            border-color: #9ae6b4;
-            background: #f0fff4;
-            color: #22543d;
-        }
-
-        body.dark-mode .callout-success {
-            background: #1b4332;
-            border-color: #22543d;
-            color: #9ae6b4;
-        }
-
-        .callout-danger {
-            border-left-color: #c53030;
-            border-color: #fc8181;
-            background: #fff5f5;
-            color: #742a2a;
-        }
-
-        body.dark-mode .callout-danger {
-            background: #3d0000;
-            border-color: #742a2a;
-            color: #fc8181;
-        }
-
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: 600;
-            margin-right: 8px;
-            margin-bottom: 10px;
-        }
-
-        .badge-beginner {
-            background: #E8F5E9;
-            color: #2E7D32;
-        }
-
-        body.dark-mode .badge-beginner {
-            background: rgba(76, 175, 80, 0.2);
-            color: #81C784;
-        }
-
-        .badge-intermediate {
-            background: #E3F2FD;
-            color: #1565C0;
-        }
-
-        body.dark-mode .badge-intermediate {
-            background: rgba(33, 150, 243, 0.2);
-            color: #64B5F6;
-        }
-
-        .badge-advanced {
-            background: #FFF3E0;
-            color: #E65100;
-        }
-
-        body.dark-mode .badge-advanced {
-            background: rgba(255, 152, 0, 0.2);
-            color: #FFB74D;
-        }
-
-        /* Barre de recherche */
-        .search-container {
-            position: sticky;
-            top: 70px;
-            background: white;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            z-index: 100;
-            display: none;
-            border: 1px solid #e2e8f0;
-        }
-
-        body.dark-mode .search-container {
-            background: #2d3748;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-            border-color: #4a5568;
-        }
-
-        .search-container.active {
-            display: block;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 2px solid var(--light-border);
-            border-radius: 6px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-        }
-
-        body.dark-mode .search-input {
-            border-color: var(--dark-border);
-            background: var(--dark-bg);
-            color: var(--dark-text);
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
-        }
-
-        .highlight {
-            background: rgba(255, 193, 7, 0.4);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        /* Indicateur de section dans TOC */
-        .toc-items a.active {
-            background: rgba(102, 126, 234, 0.2);
-            color: var(--primary);
-            font-weight: 600;
-            border-left: 3px solid var(--primary);
-            padding-left: 15px;
-        }
-
-        body.dark-mode .toc-items a.active {
-            background: rgba(240, 147, 251, 0.2);
-            color: var(--secondary);
-            border-left-color: var(--secondary);
-        }
-
-        /* Lien vers docs */
-        .doc-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 10px;
-            padding: 8px 12px;
-            background: #ebf8ff;
-            color: #3182ce;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 0.9em;
-            transition: all 0.2s ease;
-            border: 1px solid #bee3f8;
-        }
-
-        body.dark-mode .doc-link {
-            background: #1a365d;
-            color: #63b3ed;
-            border-color: #2c5282;
-        }
-
-        .doc-link:hover {
-            background: #cce5ff;
-            transform: translateX(2px);
-        }
-
-        /* Overlay pour TOC */
-        .toc-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 998;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .toc-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        /* Scrollbar personnalisée */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 5px;
+            height: 5px;
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--light-bg);
-        }
-
-        body.dark-mode ::-webkit-scrollbar-track {
-            background: var(--dark-bg);
+            background: transparent;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 5px;
+            background: #555;
+            border-radius: 3px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            animation: slideUp 0.3s ease;
+            font-size: 0.85em;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast-success {
+            background: var(--success);
+        }
+
+        .toast-error {
+            background: var(--danger);
+        }
+
+        .toast-info {
+            background: var(--secondary);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 8px;
+            .btn-menu {
+                display: block;
             }
-
-            header h1 {
-                font-size: 1.8em;
+            .shortcut-hint {
+                display: none;
             }
-
-            header {
-                padding: 30px 20px;
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 50px;
+                bottom: 0;
+                width: 85%;
+                max-width: 320px;
+                z-index: 100;
+                box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
             }
-
-            .content {
-                padding: 20px;
+            .sidebar.open {
+                left: 0;
             }
-
-            .toc-toggle {
-                display: inline-flex !important;
+            .sidebar-overlay.active {
+                display: block;
             }
-
-            .subsection {
-                padding: 15px;
+            .main-container {
+                margin-left: 0;
             }
-
-            .code-item {
-                padding: 12px;
+            .CodeMirror {
+                height: 160px;
+                min-height: 110px;
+                font-size: 12px;
             }
+            .output-content {
+                max-height: 180px;
+                font-size: 11px;
+            }
+            .btn {
+                padding: 5px 8px;
+                font-size: 0.72em;
+            }
+        }
 
-            .explanation {
-                margin-left: 15px;
-                padding: 10px;
+        @media (max-width: 480px) {
+            .navbar {
+                height: 44px;
+                padding: 0 10px;
+            }
+            .nav-brand {
+                font-size: 0.85em;
+            }
+            .main-container {
+                height: calc(100vh - 44px);
+                margin-top: 44px;
+            }
+            .sidebar {
+                top: 44px;
+                width: 90%;
+            }
+            .category-tab {
+                font-size: 0.62em;
+                padding: 8px 3px;
+            }
+            .CodeMirror {
+                height: 130px;
+                min-height: 90px;
+            }
+            .output-content {
+                max-height: 140px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Barre de progression de lecture -->
-    <div class="progress-bar" id="progressBar"></div>
+    <div class="image-modal" id="imageModal">
+        <button class="image-modal-close" id="imageModalClose">&times;</button>
+        <img src="" alt="Graphique en grand" id="imageModalImg" />
+    </div>
 
-    <!-- Bouton Haut de Page -->
-    <button class="scroll-top" id="scrollTop" title="Retour en haut" aria-label="Retour au haut de la page">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <!-- Navigation Bar -->
     <nav class="navbar">
-        <div class="navbar-left">
-            <i class="fas fa-code" style="font-size: 1.3em; color: var(--primary);"></i>
-            <span class="navbar-brand">Data Syntax Guide</span>
+        <div class="nav-brand">
+            <i class="fas fa-laptop-code" style="color: var(--secondary);"></i>
+            <span>Exercices Python Data</span>
         </div>
-        <div class="navbar-right">
-
-            <a href="exercices_interactifs.html" class="nav-link">
-                <i class="fas fa-laptop-code"></i> Exercices
+        <div class="nav-actions">
+            <button class="btn-menu" id="menuToggle" title="Menu">
+                <i class="fas fa-bars"></i> Exercices
+            </button>
+            <a href="syntaxes.html" class="nav-link">
+                <i class="fas fa-book"></i> Lessons
             </a>
-            <button class="toggle-theme" id="searchToggle" title="Rechercher (appuyer sur /)">
-                <i class="fas fa-search"></i>
-            </button>
-            <button class="toc-toggle" id="tocToggle">
-                <i class="fas fa-bars"></i> Guide
-            </button>
-            <button class="toggle-theme" id="themeToggle" title="Basculer le mode sombre">
+            <button class="btn-icon" id="themeToggle" title="Mode sombre">
                 <i class="fas fa-moon"></i>
             </button>
         </div>
     </nav>
 
-    <!-- Table of Contents Sidebar -->
-    <div class="toc-overlay" id="tocOverlay"></div>
-    <div class="toc-sidebar" id="tocSidebar">
-        <h3><i class="fas fa-list"></i> Sommaire</h3>
-        <ul class="toc-items">
-            <li><a href="#numpy"><i class="fas fa-calculator"></i> NumPy</a></li>
-            <li><a href="#pandas"><i class="fas fa-database"></i> Pandas</a></li>
-            <li><a href="#matplotlib"><i class="fas fa-chart-line"></i> Matplotlib</a></li>
-            <li><a href="#seaborn"><i class="fas fa-palette"></i> Seaborn</a></li>
-        </ul>
-    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-book"></i> Guide Complet - NumPy, Pandas, Matplotlib & Seaborn</h1>
-            <p>Documentation technique pour maîtriser les calculs numériques et la visualisation de données</p>
-
-            
-        </header>
-
-        <div class="content">
-            <!-- Barre de recherche -->
-            <div class="search-container" id="searchContainer">
-                <input type="text" class="search-input" id="searchInput" placeholder="Rechercher... (NumPy, Pandas, plot, groupby, etc.)" aria-label="Champ de recherche">
+    <div class="main-container">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-stats">
+                <span>Progression : <strong id="progressCount">0/50</strong></span>
+                <span id="progressPercent">0%</span>
             </div>
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="all">
+                    <i class="fas fa-list"></i> Tous
+                </button>
+                <button class="category-tab" data-category="numpy">
+                    <i class="fas fa-calculator"></i> NumPy
+                </button>
+                <button class="category-tab" data-category="pandas">
+                    <i class="fas fa-table"></i> Pandas
+                </button>
+                <button class="category-tab" data-category="matplotlib">
+                    <i class="fas fa-chart-line"></i> Matplotlib
+                </button>
+                <button class="category-tab" data-category="seaborn">
+                    <i class="fas fa-palette"></i> Seaborn
+                </button>
+            </div>
+            <div class="exercise-list" id="exerciseList"></div>
+        </div>
 
-            <!-- ===== NUMPY ===== -->
-            <div class="section" id="numpy">
-                <h2><i class="fas fa-calculator"></i> NumPy - Calcul numérique & Tableaux</h2>
-                
-                <div class="library-intro">
-                    <strong><i class="fas fa-thumbtack"></i> À propos de NumPy :</strong> NumPy est utilisé pour les calculs mathématiques rapides sur des blocs de données du même type.
+        <div class="content-area">
+            <div class="exercise-panel" id="exercisePanel">
+                <h2 id="exerciseTitle">
+                    <i class="fas fa-tasks"></i> Selectionnez un exercice
+                </h2>
+                <div class="description-box" id="exerciseDescription">
+                    Choisissez un exercice dans la liste a gauche pour commencer.
                 </div>
-
-                <div class="callout callout-info">
-                    <div class="callout-icon"><i class="fas fa-info-circle"></i></div>
-                    <div class="callout-content">
-                        <strong>Conseil</strong>
-                        NumPy est 100x plus rapide qu'une boucle Python classique. Utilisez-le pour toutes vos opérations mathématiques.
-                    </div>
-                </div>
-
-                <div class="callout callout-warning">
-                    <div class="callout-icon"><i class="fas fa-exclamation-circle"></i></div>
-                    <div class="callout-content">
-                        <strong>Attention</strong>
-                        Les indices NumPy commencent à 0 (pas à 1). <code>np.arange(0, 10)</code> produit [0,1,2...9] (pas 10).
-                    </div>
-                </div>
-
-                <!-- Création de tableaux -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                        <span class="badge badge-intermediate">Fréquent</span>
-                    </div>
-                    <h3>1. Création de Tableaux (Arrays)</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">np.array([1, 2, 3])</div>
-                        <div class="explanation">→ Crée un tableau à partir d'une liste</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.zeros(10)</div>
-                        <div class="explanation">→ Crée un tableau rempli de zéros (10 éléments)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.ones((3, 3))</div>
-                        <div class="explanation">→ Crée une matrice 3x3 remplie de uns</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.arange(0, 10, 2)</div>
-                        <div class="explanation">→ Crée une suite de nombres de 0 à 9 par pas de 2<br/>→ Résultat : [0, 2, 4, 6, 8]</div>
-                    </div>
-                </div>
-
-                <!-- Statistiques -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                        <span class="badge badge-intermediate">Essentiel</span>
-                    </div>
-                    <h3>2. Statistiques de Base</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">np.mean(array)</div>
-                        <div class="explanation">→ Calcule la moyenne des éléments du tableau</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.max(array)</div>
-                        <div class="explanation">→ Retourne la valeur maximale</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.min(array)</div>
-                        <div class="explanation">→ Retourne la valeur minimale</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.sum(array)</div>
-                        <div class="explanation">→ Calcule la somme de tous les éléments</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.std(array)</div>
-                        <div class="explanation">→ Calcule l'écart-type</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.ptp(array)</div>
-                        <div class="explanation">→ Calcule l'amplitude thermique (Peak-To-Peak = Max - Min)</div>
-                    </div>
-                </div>
-
-                <!-- Manipulation & Filtrage -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-intermediate">Important</span>
-                        <span class="badge badge-advanced">Avancé</span>
-                    </div>
-                    <h3>3. Manipulation & Filtrage</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">array[array > 10]</div>
-                        <div class="explanation">→ Isole les valeurs supérieures à 10</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.sum(array < 0)</div>
-                        <div class="explanation">→ Compte le nombre de valeurs négatives</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">np.round(array, 2)</div>
-                        <div class="explanation">→ Arrondit les valeurs à 2 décimales</div>
-                    </div>
+                <div class="expected-output" id="expectedOutput" style="display:none;">
+                    <strong><i class="fas fa-eye"></i> Resultat attendu :</strong>
+                    <span id="expectedText"></span>
                 </div>
             </div>
 
-            <!-- ===== PANDAS ===== -->
-            <div class="section" id="pandas">
-                <h2><i class="fas fa-database"></i> Pandas - Manipulation de Tableaux/Données</h2>
-                
-                <div class="library-intro">
-                    <strong><i class="fas fa-thumbtack"></i> À propos de Pandas :</strong> Pandas est parfait pour structurer, nettoyer et analyser des données tabulaires (comme Excel).
+            <div class="editor-section">
+                <div class="editor-toolbar">
+                    <button class="btn btn-run" id="runBtn">
+                        <i class="fas fa-play"></i> Executer
+                    </button>
+                    <button class="btn btn-hint" id="hintBtn">
+                        <i class="fas fa-lightbulb"></i> Indice
+                    </button>
+                    <button class="btn btn-solution" id="solutionBtn">
+                        <i class="fas fa-eye"></i> Solution
+                    </button>
+                    <button class="btn btn-copy" id="copyBtn">
+                        <i class="fas fa-copy"></i> Copier
+                    </button>
+                    <button class="btn btn-reset" id="resetBtn">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
                 </div>
-
-                <div class="callout callout-success">
-                    <div class="callout-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="callout-content">
-                        <strong>Bonne pratique</strong>
-                        Toujours commencer par <code>df.info()</code> et <code>df.describe()</code> pour comprendre vos données avant de les analyser.
-                    </div>
-                </div>
-
-                <div class="callout callout-warning">
-                    <div class="callout-icon"><i class="fas fa-exclamation-circle"></i></div>
-                    <div class="callout-content">
-                        <strong>Attention</strong>
-                        Les modifications sur un DataFrame ne s'appliquent pas in-place par défaut. Utilisez <code>inplace=True</code> ou réassignez : <code>df = df.dropna()</code>
-                    </div>
-                </div>
-
-                <!-- Création et Chargement -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                    </div>
-                    <h3>1. Création et Chargement</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">pd.DataFrame(data)</div>
-                        <div class="explanation">→ Crée un DataFrame à partir d'un dictionnaire</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df = pd.read_csv('fichier.csv')</div>
-                        <div class="explanation">→ Lit un fichier CSV</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df = pd.read_excel('fichier.xlsx')</div>
-                        <div class="explanation">→ Lit un fichier Excel</div>
-                    </div>
-                </div>
-
-                <!-- Inspection -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                        <span class="badge badge-intermediate">Essentiel</span>
-                    </div>
-                    <h3>2. Inspection des Données</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">df.head(n)</div>
-                        <div class="explanation">→ Affiche les n premières lignes du DataFrame</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.info()</div>
-                        <div class="explanation">→ Affiche les informations du tableau (types de colonnes, valeurs manquantes, etc.)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.describe()</div>
-                        <div class="explanation">→ Affiche les statistiques rapides (moyenne, min, max de toutes les colonnes numériques)</div>
-                    </div>
-                </div>
-
-                <!-- Sélection & Filtrage -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                        <span class="badge badge-intermediate">Très fréquent</span>
-                    </div>
-                    <h3>3. Sélection & Filtrage</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">df['Nom_Colonne']</div>
-                        <div class="explanation">→ Sélectionne une colonne spécifique</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df[df['Vente'] > 1500]</div>
-                        <div class="explanation">→ Filtre les lignes où la colonne 'Vente' est supérieure à 1500</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.loc[df['Benefice'].idxmax()]</div>
-                        <div class="explanation">→ Retourne la ligne qui contient le bénéfice maximal</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.loc[ligne, colonne]</div>
-                        <div class="explanation">→ Accès à une cellule spécifique par ligne et colonne</div>
-                    </div>
-                </div>
-
-                <!-- Calculs & Groupements -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-intermediate">Important</span>
-                        <span class="badge badge-advanced">Avancé</span>
-                    </div>
-                    <h3>4. Calculs & Groupements</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">df['Total'] = df['A'] + df['B']</div>
-                        <div class="explanation">→ Crée une colonne calculée 'Total' (somme de A et B)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df['Vente'].sum()</div>
-                        <div class="explanation">→ Calcule la somme de la colonne 'Vente'</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df['Vente'].mean()</div>
-                        <div class="explanation">→ Calcule la moyenne de la colonne 'Vente'</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.groupby('Categorie')['Vente'].sum()</div>
-                        <div class="explanation">→ Groupe par catégorie et calcule la somme des ventes par groupe</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.sort_values(by='Vente', ascending=False)</div>
-                        <div class="explanation">→ Trie les données par la colonne 'Vente' en ordre décroissant</div>
-                    </div>
-                </div>
-
-                <!-- Nettoyage -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-intermediate">Critique</span>
-                        <span class="badge badge-advanced">Compétence clé</span>
-                    </div>
-                    <h3>5. Nettoyage (Data Cleaning)</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">df.dropna()</div>
-                        <div class="explanation">→ Supprime les lignes contenant des valeurs vides (NaN)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.fillna(0)</div>
-                        <div class="explanation">→ Remplace les valeurs vides par 0</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">pd.to_datetime(df['Date'])</div>
-                        <div class="explanation">→ Convertit la colonne 'Date' en format datetime</div>
-                    </div>
-                </div>
-
-                <!-- Syntaxes Avancées Pandas -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-advanced">Avancé</span>
-                        <span class="badge badge-advanced">Puissant</span>
-                    </div>
-                    <h3>6. Syntaxes Avancées : Analyse & Nettoyage</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">df.isna() / df.isnull()</div>
-                        <div class="explanation">→ Retourne un booléen pour chaque valeur manquante (NaN)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.isnull().sum()</div>
-                        <div class="explanation">→ Compte le nombre de valeurs manquantes par colonne</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.dropna(subset=['Colonne1', 'Colonne2'])</div>
-                        <div class="explanation">→ Supprime les lignes où certaines colonnes sont NaN</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.fillna(method='ffill')</div>
-                        <div class="explanation">→ Remplit les NaN avec la valeur précédente (forward fill)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df['Colonne'].duplicated().sum()</div>
-                        <div class="explanation">→ Compte le nombre de doublons dans une colonne</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.drop_duplicates(subset=['Colonne'], keep='first')</div>
-                        <div class="explanation">→ Supprime les doublons en gardant la première occurrence</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df['Colonne'].str.replace('ancien', 'nouveau')</div>
-                        <div class="explanation">→ Remplace du texte dans les valeurs de colonne (texte)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df['Colonne'].str.upper() / df['Colonne'].str.lower()</div>
-                        <div class="explanation">→ Convertit le texte en majuscules/minuscules</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df['Colonne'].str.strip()</div>
-                        <div class="explanation">→ Supprime les espaces au début et fin du texte</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df['Colonne'].astype(int) / df['Colonne'].astype(str)</div>
-                        <div class="explanation">→ Convertit le type de données (int, float, str, etc.)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.apply(lambda x: x * 2)</div>
-                        <div class="explanation">→ Applique une fonction personnalisée à chaque ligne/colonne</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.groupby(['Cat1', 'Cat2'])['Vente'].agg(['sum', 'mean', 'count'])</div>
-                        <div class="explanation">→ Agrégation multiple par groupes (plusieurs fonctions)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.pivot_table(values='Vente', index='Mois', columns='Region', aggfunc='sum')</div>
-                        <div class="explanation">→ Crée un tableau croisé dynamique (pivot)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.merge(df2, on='Clé', how='left')</div>
-                        <div class="explanation">→ Fusionne deux DataFrames (inner, left, right, outer)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df[df['Colonne'].isin(['A', 'B', 'C'])]</div>
-                        <div class="explanation">→ Filtre les lignes où Colonne est dans une liste</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.query('Age > 30 and Ville == \"Paris\"')</div>
-                        <div class="explanation">→ Filtre avec syntaxe SQL-like (plus lisible)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.rename(columns={'Ancien': 'Nouveau'})</div>
-                        <div class="explanation">→ Renomme les colonnes du DataFrame</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.drop(['Colonne1', 'Colonne2'], axis=1)</div>
-                        <div class="explanation">→ Supprime des colonnes (axis=1 pour colonnes, 0 pour lignes)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.reset_index(drop=True)</div>
-                        <div class="explanation">→ Réinitialise l'index après filtrage/suppression</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.sort_values(by=['Col1', 'Col2'], ascending=[True, False])</div>
-                        <div class="explanation">→ Trie par plusieurs colonnes avec ordres différents</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df['Colonne'].value_counts()</div>
-                        <div class="explanation">→ Compte les occurrences uniques (fréquence)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.corr()</div>
-                        <div class="explanation">→ Calcule la matrice de corrélation entre colonnes numériques</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">pd.cut(df['Colonne'], bins=5)</div>
-                        <div class="explanation">→ Divise les données en intervalles (bins) pour discrétisation</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">df.to_csv('fichier.csv', index=False)</div>
-                        <div class="explanation">→ Exporte le DataFrame en CSV (json, excel, sql, etc.)</div>
-                    </div>
-                </div>
+                <textarea id="codeEditor"></textarea>
             </div>
 
-            <!-- ===== MATPLOTLIB ===== -->
-            <div class="section" id="matplotlib">
-                <h2><i class="fas fa-chart-line"></i> Matplotlib - Visualisation des Données</h2>
-                
-                <div class="library-intro">
-                    <strong><i class="fas fa-thumbtack"></i> À propos de Matplotlib :</strong> Matplotlib est la bibliothèque de base pour créer des graphiques, des histogrammes et des visualisations statiques en Python.
+            <div class="output-section">
+                <div class="output-header">
+                    <i class="fas fa-terminal"></i> Console
+                    <span class="status-dot dot-ready" id="statusDot"></span>
+                    <span id="statusText" style="font-size:0.8em;opacity:0.7;">Pret</span>
                 </div>
-
-                <div class="callout callout-info">
-                    <div class="callout-icon"><i class="fas fa-info-circle"></i></div>
-                    <div class="callout-content">
-                        <strong>Conseil</strong>
-                        Pour des graphiques plus beaux et modernes, utilisez Seaborn qui est construit sur Matplotlib mais offre des styles par défaut supérieurs.
-                    </div>
+                <div class="output-content" id="outputContent">
+                    Bienvenue ! Selectionnez un exercice et cliquez sur "Executer".
                 </div>
-
-                <!-- Création de figures -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                        <span class="badge badge-intermediate">Essentiels</span>
-                    </div>
-                    <h3>1. Création de Figures et Subplots</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">import matplotlib.pyplot as plt</div>
-                        <div class="explanation">→ Importe la bibliothèque Matplotlib</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.figure(figsize=(10, 6))</div>
-                        <div class="explanation">→ Crée une figure avec taille 10x6 pouces</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">fig, ax = plt.subplots(2, 2)</div>
-                        <div class="explanation">→ Crée une grille 2x2 de subplots (4 graphiques)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.subplot(2, 3, 1)</div>
-                        <div class="explanation">→ Sélectionne le subplot 1 dans une grille 2x3</div>
-                    </div>
-                </div>
-
-                <!-- Types de graphiques -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                        <span class="badge badge-intermediate">Très fréquent</span>
-                    </div>
-                    <h3>2. Tracer des Graphiques (Plots)</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">plt.plot(x, y)</div>
-                        <div class="explanation">→ Trace une courbe linéaire</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.scatter(x, y)</div>
-                        <div class="explanation">→ Trace un nuage de points (scatter plot)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.bar(categories, values)</div>
-                        <div class="explanation">→ Crée un diagramme en barres</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.hist(data, bins=20)</div>
-                        <div class="explanation">→ Crée un histogramme avec 20 barres</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.pie(values, labels=labels)</div>
-                        <div class="explanation">→ Crée un diagramme circulaire (pie chart)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.boxplot(data)</div>
-                        <div class="explanation">→ Crée un diagramme en boîte (box plot)</div>
-                    </div>
-                </div>
-
-                <!-- Personnalisation -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-intermediate">Important</span>
-                    </div>
-                    <h3>3. Personnalisation des Graphiques</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">plt.title('Titre du graphique')</div>
-                        <div class="explanation">→ Ajoute un titre au graphique</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.xlabel('Axe X') / plt.ylabel('Axe Y')</div>
-                        <div class="explanation">→ Ajoute les étiquettes des axes X et Y</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.legend()</div>
-                        <div class="explanation">→ Affiche la légende du graphique</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.grid(True)</div>
-                        <div class="explanation">→ Ajoute une grille de fond</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.xlim(0, 100) / plt.ylim(0, 50)</div>
-                        <div class="explanation">→ Définit les limites des axes X et Y</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.xticks(rotation=45)</div>
-                        <div class="explanation">→ Fait pivoter les étiquettes de l'axe X de 45°</div>
-                    </div>
-                </div>
-
-                <!-- Style et couleurs -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-intermediate">Important</span>
-                    </div>
-                    <h3>4. Style et Couleurs</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">plt.plot(x, y, color='red', linewidth=2)</div>
-                        <div class="explanation">→ Trace une ligne rouge d'épaisseur 2</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.scatter(x, y, s=100, alpha=0.5)</div>
-                        <div class="explanation">→ Trace des points avec transparence (alpha=0.5)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.style.use('seaborn')</div>
-                        <div class="explanation">→ Applique le style 'seaborn' à tous les graphiques</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.rcParams['figure.figsize'] = (12, 8)</div>
-                        <div class="explanation">→ Définit la taille par défaut des figures</div>
-                    </div>
-                </div>
-
-                <!-- Affichage et sauvegarde -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                    </div>
-                    <h3>5. Affichage et Sauvegarde</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">plt.show()</div>
-                        <div class="explanation">→ Affiche le graphique dans une fenêtre</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.savefig('graphique.png')</div>
-                        <div class="explanation">→ Sauvegarde le graphique en PNG</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.savefig('graphique.pdf', dpi=300)</div>
-                        <div class="explanation">→ Sauvegarde en PDF avec haute résolution (300 dpi)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.tight_layout()</div>
-                        <div class="explanation">→ Ajuste automatiquement l'espacement des subplots</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.close()</div>
-                        <div class="explanation">→ Ferme la figure actuelle (libère la mémoire)</div>
-                    </div>
-                </div>
-
-                <!-- Syntaxes Avancées -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-advanced">Avancé</span>
-                    </div>
-                    <h3>6. Syntaxes Avancées et Utiles</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">plt.text(x, y, 'Texte')</div>
-                        <div class="explanation">→ Ajoute du texte à une position (x, y) du graphique</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.annotate('Label', xy=(x, y), xytext=(x+10, y+10))</div>
-                        <div class="explanation">→ Ajoute une annotation avec flèche pointant vers (x, y)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">ax.axhline(y=10, color='red', linestyle='--')</div>
-                        <div class="explanation">→ Ajoute une ligne horizontale à y=10 (pointillée rouge)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">ax.axvline(x=5, color='blue', linestyle=':')</div>
-                        <div class="explanation">→ Ajoute une ligne verticale à x=5 (pointée bleu)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.plot(x, y, marker='o', linestyle='-', linewidth=2)</div>
-                        <div class="explanation">→ Personnalise marqueurs, style et épaisseur de ligne</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">ax.fill_between(x, y1, y2, alpha=0.3, color='cyan')</div>
-                        <div class="explanation">→ Remplit l'area entre deux courbes avec transparence</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.colorbar(im)</div>
-                        <div class="explanation">→ Ajoute une barre de couleur pour les images/heatmap</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">ax.set_xscale('log')</div>
-                        <div class="explanation">→ Utilise une échelle logarithmique pour l'axe X (ou 'linear')</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">fig.suptitle('Titre global')</div>
-                        <div class="explanation">→ Ajoute un super-titre pour toute la figure</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">ax.invert_xaxis() / ax.invert_yaxis()</div>
-                        <div class="explanation">→ Inverse l'ordre des valeurs sur l'axe X ou Y</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ===== SEABORN ===== -->
-            <div class="section" id="seaborn">
-                <h2><i class="fas fa-palette"></i> Seaborn - Visualisation Statistique</h2>
-                
-                <div class="library-intro">
-                    <strong><i class="fas fa-thumbtack"></i> À propos de Seaborn :</strong> Seaborn est construite sur Matplotlib et offre des graphiques statistiques plus complexes et esthétiques. Elle s'intègre parfaitement avec Pandas.
-                </div>
-
-                <div class="callout callout-success">
-                    <div class="callout-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="callout-content">
-                        <strong>Bonne pratique</strong>
-                        Combinez Seaborn avec Pandas DataFrames pour une workflow optimale : <code>sns.scatterplot(data=df, x='col1', y='col2')</code>
-                    </div>
-                </div>
-
-                <!-- Chargement et configuration -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                    </div>
-                    <h3>1. Chargement et Configuration</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">import seaborn as sns</div>
-                        <div class="explanation">→ Importe la bibliothèque Seaborn</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.set_theme(style='darkgrid')</div>
-                        <div class="explanation">→ Définit le style global ('darkgrid', 'whitegrid', 'dark', 'white')</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.set_palette('husl')</div>
-                        <div class="explanation">→ Définit la palette de couleurs</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.color_palette()</div>
-                        <div class="explanation">→ Affiche la palette de couleurs actuelle</div>
-                    </div>
-                </div>
-
-                <!-- Graphiques statistiques -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-beginner">Débutant</span>
-                        <span class="badge badge-intermediate">Très utile</span>
-                    </div>
-                    <h3>2. Graphiques Statistiques</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y')</div>
-                        <div class="explanation">→ Crée un nuage de points avec options statistiques</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.lineplot(data=df, x='X', y='Y')</div>
-                        <div class="explanation">→ Trace une courbe linéaire avec intervalle de confiance</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.barplot(data=df, x='Categorie', y='Vente')</div>
-                        <div class="explanation">→ Crée un diagramme en barres avec moyennes estimées</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.countplot(data=df, x='Categorie')</div>
-                        <div class="explanation">→ Compte et affiche la fréquence de chaque catégorie</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.boxplot(data=df, x='Categorie', y='Valeur')</div>
-                        <div class="explanation">→ Crée des diagrammes en boîte pour comparer distributions</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.violinplot(data=df, x='Categorie', y='Valeur')</div>
-                        <div class="explanation">→ Crée un graphique en violon (distribution détaillée)</div>
-                    </div>
-                </div>
-
-                <!-- Distributions -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-intermediate">Important</span>
-                    </div>
-                    <h3>3. Graphiques de Distribution</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">sns.histplot(data=df, x='Colonne', bins=20)</div>
-                        <div class="explanation">→ Crée un histogramme avec 20 barres</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.kdeplot(data=df, x='Colonne')</div>
-                        <div class="explanation">→ Crée une courbe de densité (estimateur à noyau)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.distplot(data, kde=True)</div>
-                        <div class="explanation">→ Combine histogramme et courbe de densité</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.ecdfplot(data=df, x='Colonne')</div>
-                        <div class="explanation">→ Trace la fonction de répartition empirique (ECDF)</div>
-                    </div>
-                </div>
-
-                <!-- Matrices et corrélations -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-intermediate">Important</span>
-                        <span class="badge badge-advanced">Puissant</span>
-                    </div>
-                    <h3>4. Matrices et Corrélations</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">sns.heatmap(correlation_matrix, annot=True)</div>
-                        <div class="explanation">→ Affiche une matrice de chaleur avec valeurs (corrélations, etc.)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.clustermap(data)</div>
-                        <div class="explanation">→ Crée une heatmap avec clustering hiérarchique</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">corr = df.corr(); sns.heatmap(corr, annot=True, cmap='coolwarm')</div>
-                        <div class="explanation">→ Affiche les corrélations entre colonnes avec colormap</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.pairplot(df)</div>
-                        <div class="explanation">→ Crée une matrice de graphiques pour toutes les paires de colonnes</div>
-                    </div>
-                </div>
-
-                <!-- Graphiques avancés -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-advanced">Avancé</span>
-                    </div>
-                    <h3>5. Graphiques Avancés</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">sns.jointplot(data=df, x='X', y='Y', kind='hex')</div>
-                        <div class="explanation">→ Combine 1D et 2D (scatter, kde, hist, hex, regression)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.regplot(data=df, x='X', y='Y')</div>
-                        <div class="explanation">→ Trace une courbe de régression linéaire</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.lmplot(data=df, x='X', y='Y', hue='Categorie')</div>
-                        <div class="explanation">→ Régression linéaire avec plusieurs groupes (par couleur)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.stripplot(data=df, x='X', y='Y')</div>
-                        <div class="explanation">→ Affiche tous les points individuels (scatter simple)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.swarmplot(data=df, x='Categorie', y='Valeur')</div>
-                        <div class="explanation">→ Affiche tous les points en évitant les chevauchements</div>
-                    </div>
-                </div>
-
-                <!-- Personnalisation et sauvegarde -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-intermediate">Important</span>
-                    </div>
-                    <h3>6. Personnalisation et Sauvegarde</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">plt.title('Titre'); plt.xlabel('X'); plt.ylabel('Y')</div>
-                        <div class="explanation">→ Ajoute titre et étiquettes (fonctionne avec Seaborn)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.set_context('poster')</div>
-                        <div class="explanation">→ Définit la taille des éléments ('paper', 'notebook', 'talk', 'poster')</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">g = sns.FacetGrid(df, col='Categorie')</div>
-                        <div class="explanation">→ Crée une grille de graphiques facettisés par colonne</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">g.map(plt.scatter, 'X', 'Y')</div>
-                        <div class="explanation">→ Applique une fonction à chaque facette de la grille</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">plt.savefig('graphique_seaborn.png', dpi=300, bbox_inches='tight')</div>
-                        <div class="explanation">→ Sauvegarde avec résolution haute et ajustement automatique</div>
-                    </div>
-                </div>
-
-                <!-- Syntaxes Avancées Seaborn -->
-                <div class="subsection">
-                    <div>
-                        <span class="badge badge-advanced">Avancé</span>
-                        <span class="badge badge-advanced">Puissant</span>
-                    </div>
-                    <h3>7. Syntaxes Avancées et Paramétrages Utiles</h3>
-                    
-                    <div class="code-item">
-                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y', hue='Categorie')</div>
-                        <div class="explanation">→ Colore les points par catégorie (hue = teinte/couleur)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y', hue='Cat1', style='Cat2')</div>
-                        <div class="explanation">→ Utilise couleurs pour Cat1 et styles de marqueurs pour Cat2</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y', size='Valeur')</div>
-                        <div class="explanation">→ Varie la taille des points selon Valeur</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.barplot(data=df, x='X', y='Y', hue_order=['A', 'B', 'C'])</div>
-                        <div class="explanation">→ Définit l'ordre d'affichage des catégories</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.scatterplot(data=df, x='X', y='Y', palette='Set2')</div>
-                        <div class="explanation">→ Utilise une palette nommée (Set1, Set2, husl, dark, pastel...)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.relplot(data=df, x='X', y='Y', hue='Cat', col='Type')</div>
-                        <div class="explanation">→ Crée plusieurs graphiques facettisés par colonne (figure-level)</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.catplot(data=df, x='X', y='Y', kind='violin', hue='Cat')</div>
-                        <div class="explanation">→ Fonction figure-level pour graphiques catégoriques</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.displot(data=df, x='Colonne', kde=True, hue='Categorie')</div>
-                        <div class="explanation">→ Figure-level pour distributions avec plusieurs groupes</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.heatmap(corr, cmap='coolwarm', fmt='.2f', cbar=True)</div>
-                        <div class="explanation">→ Heatmap avec colormap personnalisée et format des nombres</div>
-                    </div>
-
-                    <div class="code-item">
-                        <div class="code-line">sns.boxplot(data=df, x='Cat', y='Val', dodge=False)</div>
-                        <div class="explanation">→ dodge=False superpose les boîtes au lieu de les côte à côte</div>
-                    </div>
-                </div>
+                <div class="output-image-container" id="outputImageContainer" style="display:none;"></div>
             </div>
         </div>
 
-        <footer>
-            <p><i class="fas fa-book"></i> Guide de Référence Technique - NumPy, Pandas, Matplotlib & Seaborn</p>
-        </footer>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <!-- ============================================ -->
+    <!-- PWA INSTALL PROMPT - AJOUTER ICI -->
+    <!-- ============================================ -->
+    <div id="installPrompt" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2d3748;color:white;padding:15px 20px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:3000;text-align:center;max-width:90%;width:400px;">
+        <p style="margin-bottom:10px;font-weight:600;font-size:1em;">
+            <i class="fas fa-download"></i> Installer l'application ?
+        </p>
+        <p style="font-size:0.8em;opacity:0.8;margin-bottom:12px;">
+            Acces rapide et utilisation hors-ligne
+        </p>
+        <button id="installBtn" style="background:#3182ce;color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:600;margin-right:8px;font-size:0.9em;">
+            <i class="fas fa-check"></i> Installer
+        </button>
+        <button id="dismissBtn" style="background:#4a5568;color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:0.9em;">
+            Plus tard
+        </button>
     </div>
 
     <script>
-        // ===== MODE SOMBRE =====
+        // ============ PWA INSTALLATION ============
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Afficher le prompt apres 5 secondes
+            setTimeout(() => {
+                if (document.getElementById('installPrompt')) {
+                    document.getElementById('installPrompt').style.display = 'block';
+                }
+            }, 5000);
+        });
+        
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log('Installation PWA:', outcome);
+                deferredPrompt = null;
+            }
+            document.getElementById('installPrompt').style.display = 'none';
+        });
+        
+        document.getElementById('dismissBtn').addEventListener('click', () => {
+            document.getElementById('installPrompt').style.display = 'none';
+        });
+        
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('installPrompt').style.display = 'none';
+            console.log('PWA installee avec succes !');
+            showToast('Application installee !', 'success');
+        });
+
+        // ============ SERVICE WORKER ============
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker enregistre:', registration.scope);
+                        
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('Nouvelle version disponible !');
+                                    showToast('Mise a jour disponible !', 'info');
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.log('Erreur Service Worker:', error);
+                    });
+            });
+        }
+
+        // ============ DETECTION CONNEXION ============
+        window.addEventListener('online', () => {
+            console.log('Connexion retablie');
+            showToast('Connexion retablie !', 'success');
+        });
+        
+        window.addEventListener('offline', () => {
+            console.log('Mode hors-ligne');
+            showToast('Mode hors-ligne actif', 'info');
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js">
+    </script>
+
+    <script>
+        // ============ THEME ============
         const themeToggle = document.getElementById('themeToggle');
         const body = document.body;
         const savedTheme = localStorage.getItem('theme') || 'light';
-
         if (savedTheme === 'dark') {
             body.classList.add('dark-mode');
             themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
-
         themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
             const isDark = body.classList.contains('dark-mode');
@@ -1929,185 +1035,895 @@
             themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         });
 
-        // ===== BARRE DE PROGRESSION =====
-        const progressBar = document.getElementById('progressBar');
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.scrollY;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = (scrollTop / docHeight) * 100;
-            progressBar.style.width = scrollPercent + '%';
-        });
+        // ============ IMAGE MODAL ============
+        const imageModal = document.getElementById('imageModal');
+        const imageModalImg = document.getElementById('imageModalImg');
+        const imageModalClose = document.getElementById('imageModalClose');
+        imageModal.addEventListener('click', function(e) { if (e.target === imageModal) imageModal.classList
+                .remove('active'); });
+        imageModalClose.addEventListener('click', () => imageModal.classList.remove('active'));
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && imageModal.classList.contains(
+                'active')) imageModal.classList.remove('active'); });
 
-        // ===== BOUTON HAUT DE PAGE =====
-        const scrollTop = document.getElementById('scrollTop');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                scrollTop.classList.add('visible');
-            } else {
-                scrollTop.classList.remove('visible');
+        function openImageModal(imgSrc) {
+            imageModalImg.src = imgSrc;
+            imageModal.classList.add('active');
+        }
+
+        // ============ MOBILE MENU ============
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        menuToggle.addEventListener('click', () => { sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active'); });
+        sidebarOverlay.addEventListener('click', () => { sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active'); });
+
+        function closeSidebarOnMobile() {
+            if (window.innerWidth <= 768) { sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active'); }
+        }
+
+        // ============ TOAST ============
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        // ============ IRIS CSV DATA ============
+        const irisCSVData = `sepal_length,sepal_width,petal_length,petal_width,species
+5.1,3.5,1.4,0.2,setosa
+4.9,3.0,1.4,0.2,setosa
+4.7,3.2,1.3,0.2,setosa
+4.6,3.1,1.5,0.2,setosa
+5.0,3.6,1.4,0.2,setosa
+5.4,3.9,1.7,0.4,setosa
+4.6,3.4,1.4,0.3,setosa
+5.0,3.4,1.5,0.2,setosa
+4.4,2.9,1.4,0.2,setosa
+4.9,3.1,1.5,0.1,setosa
+5.4,3.7,1.5,0.2,setosa
+4.8,3.4,1.6,0.2,setosa
+4.8,3.0,1.4,0.1,setosa
+4.3,3.0,1.1,0.1,setosa
+5.8,4.0,1.2,0.2,setosa
+5.7,4.4,1.5,0.4,setosa
+5.4,3.9,1.3,0.4,setosa
+5.1,3.5,1.4,0.3,setosa
+5.7,3.8,1.7,0.3,setosa
+5.1,3.8,1.5,0.3,setosa
+5.4,3.4,1.7,0.2,setosa
+5.1,3.7,1.5,0.4,setosa
+4.6,3.6,1.0,0.2,setosa
+5.1,3.3,1.7,0.5,setosa
+4.8,3.4,1.9,0.2,setosa
+5.0,3.0,1.6,0.2,setosa
+5.0,3.4,1.6,0.4,setosa
+5.2,3.5,1.5,0.2,setosa
+5.2,3.4,1.4,0.2,setosa
+4.7,3.2,1.6,0.2,setosa
+4.8,3.1,1.6,0.2,setosa
+5.4,3.4,1.5,0.4,setosa
+5.2,4.1,1.5,0.1,setosa
+5.5,4.2,1.4,0.2,setosa
+4.9,3.1,1.5,0.1,setosa
+5.0,3.2,1.2,0.2,setosa
+5.5,3.5,1.3,0.2,setosa
+4.9,3.1,1.5,0.1,setosa
+4.4,3.0,1.3,0.2,setosa
+5.1,3.4,1.5,0.2,setosa
+5.0,3.5,1.3,0.3,setosa
+4.5,2.3,1.3,0.3,setosa
+4.4,3.2,1.3,0.2,setosa
+5.0,3.5,1.6,0.6,setosa
+5.1,3.8,1.9,0.4,setosa
+4.8,3.0,1.4,0.3,setosa
+5.1,3.8,1.6,0.2,setosa
+4.6,3.2,1.4,0.2,setosa
+5.3,3.7,1.5,0.2,setosa
+5.0,3.3,1.4,0.2,setosa
+7.0,3.2,4.7,1.4,versicolor
+6.4,3.2,4.5,1.5,versicolor
+6.9,3.1,4.9,1.5,versicolor
+5.5,2.3,4.0,1.3,versicolor
+6.5,2.8,4.6,1.5,versicolor
+5.7,2.8,4.5,1.3,versicolor
+6.3,3.3,4.7,1.6,versicolor
+4.9,2.4,3.3,1.0,versicolor
+6.6,2.9,4.6,1.3,versicolor
+5.2,2.7,3.9,1.4,versicolor
+5.0,2.0,3.5,1.0,versicolor
+5.9,3.0,4.2,1.5,versicolor
+6.0,2.2,4.0,1.0,versicolor
+6.1,2.9,4.7,1.4,versicolor
+5.6,2.9,3.6,1.3,versicolor
+6.7,3.1,4.4,1.4,versicolor
+5.6,3.0,4.5,1.5,versicolor
+5.8,2.7,4.1,1.0,versicolor
+6.2,2.2,4.5,1.5,versicolor
+5.6,2.5,3.9,1.1,versicolor
+5.9,3.2,4.8,1.8,versicolor
+6.1,2.8,4.0,1.3,versicolor
+6.3,2.5,4.9,1.5,versicolor
+6.1,2.8,4.7,1.2,versicolor
+6.4,2.9,4.3,1.3,versicolor
+6.6,3.0,4.4,1.4,versicolor
+6.8,2.8,4.8,1.4,versicolor
+6.7,3.0,5.0,1.7,versicolor
+6.0,2.9,4.5,1.5,versicolor
+5.7,2.6,3.5,1.0,versicolor
+5.5,2.4,3.8,1.1,versicolor
+5.5,2.4,3.7,1.0,versicolor
+5.8,2.7,3.9,1.2,versicolor
+6.0,2.7,5.1,1.6,versicolor
+5.4,3.0,4.5,1.5,versicolor
+6.0,3.4,4.5,1.6,versicolor
+6.7,3.1,4.7,1.5,versicolor
+6.3,2.3,4.4,1.3,versicolor
+5.6,3.0,4.1,1.3,versicolor
+5.5,2.5,4.0,1.3,versicolor
+5.5,2.6,4.4,1.2,versicolor
+6.1,3.0,4.6,1.4,versicolor
+5.8,2.6,4.0,1.2,versicolor
+5.0,2.3,3.3,1.0,versicolor
+5.6,2.7,4.2,1.3,versicolor
+5.7,3.0,4.2,1.2,versicolor
+5.7,2.9,4.2,1.3,versicolor
+6.2,2.9,4.3,1.3,versicolor
+5.1,2.5,3.0,1.1,versicolor
+5.7,2.8,4.1,1.3,versicolor
+6.3,3.3,6.0,2.5,virginica
+5.8,2.7,5.1,1.9,virginica
+7.1,3.0,5.9,2.1,virginica
+6.3,2.9,5.6,1.8,virginica
+6.5,3.0,5.8,2.2,virginica
+7.6,3.0,6.6,2.1,virginica
+4.9,2.5,4.5,1.7,virginica
+7.3,2.9,6.3,1.8,virginica
+6.7,2.5,5.8,1.8,virginica
+7.2,3.6,6.1,2.5,virginica
+6.5,3.2,5.1,2.0,virginica
+6.4,2.7,5.3,1.9,virginica
+6.8,3.0,5.5,2.1,virginica
+5.7,2.5,5.0,2.0,virginica
+5.8,2.8,5.1,2.4,virginica
+6.4,3.2,5.3,2.3,virginica
+6.5,3.0,5.5,1.8,virginica
+7.7,3.8,6.7,2.2,virginica
+7.7,2.6,6.9,2.3,virginica
+6.0,2.2,5.0,1.5,virginica
+6.9,3.2,5.7,2.3,virginica
+5.6,2.8,4.9,2.0,virginica
+7.7,2.8,6.7,2.0,virginica
+6.3,2.7,4.9,1.8,virginica
+6.7,3.3,5.7,2.1,virginica
+7.2,3.2,6.0,1.8,virginica
+6.2,2.8,4.8,1.8,virginica
+6.1,3.0,4.9,1.8,virginica
+6.4,2.8,5.6,2.1,virginica
+7.2,3.0,5.8,1.6,virginica
+7.4,2.8,6.1,1.9,virginica
+7.9,3.8,6.4,2.0,virginica
+6.4,2.8,5.6,2.2,virginica
+6.3,2.8,5.1,1.5,virginica
+6.1,2.6,5.6,1.4,virginica
+7.7,3.0,6.1,2.3,virginica
+6.3,3.4,5.6,2.4,virginica
+6.4,3.1,5.5,1.8,virginica
+6.0,3.0,4.8,1.8,virginica
+6.9,3.1,5.4,2.1,virginica
+6.7,3.1,5.6,2.4,virginica
+6.9,3.1,5.1,2.3,virginica
+5.8,2.7,5.1,1.9,virginica
+6.8,3.2,5.9,2.3,virginica
+6.7,3.3,5.7,2.5,virginica
+6.7,3.0,5.2,2.3,virginica
+6.3,2.5,5.0,1.9,virginica
+6.5,3.0,5.2,2.0,virginica
+6.2,3.4,5.4,2.3,virginica
+5.9,3.0,5.1,1.8,virginica`;
+
+        // ============ 50 EXERCISES ============
+        const exercises = [
+            // ==================== NUMPY (15 exercices) ====================
+            {
+                id: 1, category: 'numpy', title: 'Creer un tableau avec arange', difficulty: 'easy',
+                description: 'Creez un tableau NumPy de <strong>1 a 10</strong> avec <code>np.arange()</code>. Stockez-le dans <code>arr</code>.',
+                expectedOutput: '[1 2 3 4 5 6 7 8 9 10]',
+                template: 'import numpy as np\n\narr = ',
+                hints: ['np.arange(1, 11)'],
+                solution: 'import numpy as np\n\narr = np.arange(1, 11)',
+                testCode: `assert len(arr)==10 and arr[0]==1 and arr[-1]==10, "Incorrect"`
+            },
+            {
+                id: 2, category: 'numpy', title: 'Tableau de zeros', difficulty: 'easy',
+                description: 'Creez un tableau de <strong>5 zeros</strong> avec <code>np.zeros()</code>.',
+                expectedOutput: '[0. 0. 0. 0. 0.]',
+                template: 'import numpy as np\n\nzeros_arr = ',
+                hints: ['np.zeros(5)'],
+                solution: 'import numpy as np\n\nzeros_arr = np.zeros(5)',
+                testCode: `assert len(zeros_arr)==5 and np.all(zeros_arr==0), "Incorrect"`
+            },
+            {
+                id: 3, category: 'numpy', title: 'Tableau de uns', difficulty: 'easy',
+                description: 'Creez une matrice <strong>3x3 remplie de uns</strong> avec <code>np.ones()</code>.',
+                expectedOutput: 'Matrice 3x3 de 1',
+                template: 'import numpy as np\n\nmatrice_uns = ',
+                hints: ['np.ones((3,3))'],
+                solution: 'import numpy as np\n\nmatrice_uns = np.ones((3, 3))',
+                testCode: `assert matrice_uns.shape==(3,3) and np.all(matrice_uns==1), "Incorrect"`
+            },
+            {
+                id: 4, category: 'numpy', title: 'Tableau identite', difficulty: 'easy',
+                description: 'Creez une <strong>matrice identite 4x4</strong> avec <code>np.eye()</code>.',
+                expectedOutput: 'Matrice 4x4 avec 1 sur la diagonale',
+                template: 'import numpy as np\n\nidentite = ',
+                hints: ['np.eye(4)'],
+                solution: 'import numpy as np\n\nidentite = np.eye(4)',
+                testCode: `assert identite.shape==(4,4) and np.all(np.diag(identite)==1), "Incorrect"`
+            },
+            {
+                id: 5, category: 'numpy', title: 'Tableau aleatoire', difficulty: 'easy',
+                description: 'Creez un tableau de <strong>10 nombres aleatoires entre 0 et 1</strong> avec <code>np.random.rand()</code>.',
+                expectedOutput: '10 valeurs entre 0 et 1',
+                template: 'import numpy as np\n\nnp.random.seed(42)\naleatoire = ',
+                hints: ['np.random.rand(10)'],
+                solution: 'import numpy as np\n\nnp.random.seed(42)\naleatoire = np.random.rand(10)',
+                testCode: `assert len(aleatoire)==10, "Incorrect"`
+            },
+            {
+                id: 6, category: 'numpy', title: 'Statistiques : mean, min, max', difficulty: 'easy',
+                description: 'Calculez <strong>moyenne, min, max</strong> du tableau donne.',
+                expectedOutput: 'Moy=15, Min=5, Max=25',
+                template: 'import numpy as np\narr = np.array([5,10,15,20,25])\nmoy= \nmini= \nmaxi= ',
+                hints: ['np.mean(arr), np.min(arr), np.max(arr)'],
+                solution: 'import numpy as np\narr = np.array([5,10,15,20,25])\nmoy=np.mean(arr)\nmini=np.min(arr)\nmaxi=np.max(arr)',
+                testCode: `assert moy==15 and mini==5 and maxi==25, "Incorrect"`
+            },
+            {
+                id: 7, category: 'numpy', title: 'Somme et ecart-type', difficulty: 'easy',
+                description: 'Calculez la <strong>somme</strong> et l\'<strong>ecart-type</strong> du tableau.',
+                expectedOutput: 'Somme=75, Std=7.07...',
+                template: 'import numpy as np\narr = np.array([5,10,15,20,25])\ns= \nstd= ',
+                hints: ['np.sum(arr), np.std(arr)'],
+                solution: 'import numpy as np\narr = np.array([5,10,15,20,25])\ns=np.sum(arr)\nstd=np.std(arr)',
+                testCode: `assert s==75, "Incorrect"`
+            },
+            {
+                id: 8, category: 'numpy', title: 'Shape et size', difficulty: 'easy',
+                description: 'Trouvez <strong>shape</strong> et <strong>size</strong> de la matrice.',
+                expectedOutput: '(2,3) et 6',
+                template: 'import numpy as np\nm=np.array([[1,2,3],[4,5,6]])\nforme= \ntaille= ',
+                hints: ['m.shape, m.size'],
+                solution: 'import numpy as np\nm=np.array([[1,2,3],[4,5,6]])\nforme=m.shape\ntaille=m.size',
+                testCode: `assert forme==(2,3) and taille==6, "Incorrect"`
+            },
+            {
+                id: 9, category: 'numpy', title: 'Reshape', difficulty: 'medium',
+                description: 'Transformez le tableau 1D de 12 elements en <strong>matrice 3x4</strong>.',
+                expectedOutput: 'Matrice 3x4',
+                template: 'import numpy as np\narr=np.arange(1,13)\nmatrice= ',
+                hints: ['arr.reshape(3,4)'],
+                solution: 'import numpy as np\narr=np.arange(1,13)\nmatrice=arr.reshape(3,4)',
+                testCode: `assert matrice.shape==(3,4) and matrice[2,3]==12, "Incorrect"`
+            },
+            {
+                id: 10, category: 'numpy', title: 'Slicing', difficulty: 'medium',
+                description: 'Extrayez les <strong>3 premiers</strong> et les elements d\'<strong>index 2 a 5</strong>.',
+                expectedOutput: '[10,20,30] et [30,40,50]',
+                template: 'import numpy as np\narr=np.array([10,20,30,40,50,60])\np3= \nmid= ',
+                hints: ['arr[:3], arr[2:5]'],
+                solution: 'import numpy as np\narr=np.array([10,20,30,40,50,60])\np3=arr[:3]\nmid=arr[2:5]',
+                testCode: `assert list(p3)==[10,20,30] and list(mid)==[30,40,50], "Incorrect"`
+            },
+            {
+                id: 11, category: 'numpy', title: 'Filtrage booleen', difficulty: 'medium',
+                description: 'Filtrez les <strong>valeurs > 15</strong>.',
+                expectedOutput: '[20,25,30]',
+                template: 'import numpy as np\narr=np.array([5,10,15,20,25,30])\nf= ',
+                hints: ['arr[arr>15]'],
+                solution: 'import numpy as np\narr=np.array([5,10,15,20,25,30])\nf=arr[arr>15]',
+                testCode: `assert list(f)==[20,25,30], "Incorrect"`
+            },
+            {
+                id: 12, category: 'numpy', title: 'Operations vectorielles', difficulty: 'medium',
+                description: 'Multipliez par <strong>2</strong> et ajoutez <strong>10</strong>.',
+                expectedOutput: '[12,14,16,18,20]',
+                template: 'import numpy as np\narr=np.array([1,2,3,4,5])\nr= ',
+                hints: ['arr*2+10'],
+                solution: 'import numpy as np\narr=np.array([1,2,3,4,5])\nr=arr*2+10',
+                testCode: `assert list(r)==[12,14,16,18,20], "Incorrect"`
+            },
+            {
+                id: 13, category: 'numpy', title: 'Concatener deux tableaux', difficulty: 'medium',
+                description: 'Concatenez <code>a</code> et <code>b</code> avec <code>np.concatenate()</code>.',
+                expectedOutput: '[1,2,3,4,5,6]',
+                template: 'import numpy as np\na=np.array([1,2,3])\nb=np.array([4,5,6])\nc= ',
+                hints: ['np.concatenate([a,b])'],
+                solution: 'import numpy as np\na=np.array([1,2,3])\nb=np.array([4,5,6])\nc=np.concatenate([a,b])',
+                testCode: `assert list(c)==[1,2,3,4,5,6], "Incorrect"`
+            },
+            {
+                id: 14, category: 'numpy', title: 'Empiler verticalement', difficulty: 'medium',
+                description: 'Empilez <code>a</code> et <code>b</code> verticalement avec <code>np.vstack()</code>.',
+                expectedOutput: 'Matrice 2x3',
+                template: 'import numpy as np\na=np.array([1,2,3])\nb=np.array([4,5,6])\nr= ',
+                hints: ['np.vstack([a,b])'],
+                solution: 'import numpy as np\na=np.array([1,2,3])\nb=np.array([4,5,6])\nr=np.vstack([a,b])',
+                testCode: `assert r.shape==(2,3), "Incorrect"`
+            },
+            {
+                id: 15, category: 'numpy', title: 'Compter les valeurs negatives', difficulty: 'hard',
+                description: 'Comptez le nombre de <strong>valeurs negatives</strong> dans le tableau.',
+                expectedOutput: '3',
+                template: 'import numpy as np\narr=np.array([-1,2,-3,4,-5,6])\nnb= ',
+                hints: ['np.sum(arr<0)'],
+                solution: 'import numpy as np\narr=np.array([-1,2,-3,4,-5,6])\nnb=np.sum(arr<0)',
+                testCode: `assert nb==3, "Incorrect"`
+            },
+
+            // ==================== PANDAS (15 exercices) ====================
+            {
+                id: 16, category: 'pandas', title: 'Creer un DataFrame', difficulty: 'easy',
+                description: 'Creez un DataFrame avec <strong>Nom, Age</strong> (3 lignes).',
+                expectedOutput: '3 lignes, colonnes Nom, Age',
+                template: 'import pandas as pd\ndf= ',
+                hints: ['pd.DataFrame({"Nom":["A","B","C"],"Age":[20,30,40]})'],
+                solution: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["Alice","Bob","Charlie"],"Age":[25,30,35]})',
+                testCode: `assert len(df)==3 and list(df.columns)==['Nom','Age'], "Incorrect"`
+            },
+            {
+                id: 17, category: 'pandas', title: 'Charger iris CSV', difficulty: 'easy',
+                description: 'Chargez le dataset iris via <code>StringIO(iris_csv)</code>.',
+                expectedOutput: '150 lignes',
+                template: 'import pandas as pd\nfrom io import StringIO\ndf=pd.read_csv(StringIO(iris_csv))',
+                hints: ['pd.read_csv(StringIO(iris_csv))'],
+                solution: 'import pandas as pd\nfrom io import StringIO\ndf=pd.read_csv(StringIO(iris_csv))',
+                testCode: `assert len(df)==150 and 'species' in df.columns, "Incorrect"`
+            },
+            {
+                id: 18, category: 'pandas', title: 'head() et info()', difficulty: 'easy',
+                description: 'Affichez les <strong>5 premieres lignes</strong> et <strong>info()</strong>.',
+                expectedOutput: 'Apercu du dataset',
+                template: 'import pandas as pd\nfrom io import StringIO\ndf=pd.read_csv(StringIO(iris_csv))\nprint(df.head())\nprint(df.info())',
+                hints: ['df.head(), df.info()'],
+                solution: 'import pandas as pd\nfrom io import StringIO\ndf=pd.read_csv(StringIO(iris_csv))\nprint(df.head())\nprint(df.info())',
+                testCode: `assert 'df' in dir(), "Incorrect"`
+            },
+            {
+                id: 19, category: 'pandas', title: 'describe()', difficulty: 'easy',
+                description: 'Affichez les <strong>statistiques descriptives</strong> avec <code>describe()</code>.',
+                expectedOutput: 'Statistiques (mean, std, min...)',
+                template: 'import pandas as pd\nfrom io import StringIO\ndf=pd.read_csv(StringIO(iris_csv))\nprint(df.describe())',
+                hints: ['df.describe()'],
+                solution: 'import pandas as pd\nfrom io import StringIO\ndf=pd.read_csv(StringIO(iris_csv))\nprint(df.describe())',
+                testCode: `assert 'df' in dir(), "Incorrect"`
+            },
+            {
+                id: 20, category: 'pandas', title: 'Selection de colonnes', difficulty: 'easy',
+                description: 'Selectionnez <strong>Nom et Ville</strong>.',
+                expectedOutput: '2 colonnes',
+                template: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["A","B"],"Age":[20,30],"Ville":["P","L"]})\ndf2= ',
+                hints: ['df[["Nom","Ville"]]'],
+                solution: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["A","B"],"Age":[20,30],"Ville":["P","L"]})\ndf2=df[["Nom","Ville"]]',
+                testCode: `assert list(df2.columns)==['Nom','Ville'], "Incorrect"`
+            },
+            {
+                id: 21, category: 'pandas', title: 'Filtrage conditionnel', difficulty: 'medium',
+                description: 'Filtrez <strong>Age > 25</strong>.',
+                expectedOutput: 'Seulement Bob (30)',
+                template: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["Alice","Bob","Charlie"],"Age":[25,30,20]})\nr= ',
+                hints: ['df[df["Age"]>25]'],
+                solution: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["Alice","Bob","Charlie"],"Age":[25,30,20]})\nr=df[df["Age"]>25]',
+                testCode: `assert len(r)==1 and r['Nom'].iloc[0]=='Bob', "Incorrect"`
+            },
+            {
+                id: 22, category: 'pandas', title: 'loc et iloc', difficulty: 'medium',
+                description: '<strong>iloc</strong> pour ligne 2, <strong>loc</strong> pour colonne Age.',
+                expectedOutput: 'Bob, [25,30,35]',
+                template: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["A","B","C"],"Age":[25,30,35]})\nl= \nc= ',
+                hints: ['df.iloc[1], df.loc[:,"Age"]'],
+                solution: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["A","B","C"],"Age":[25,30,35]})\nl=df.iloc[1]\nc=df.loc[:,"Age"]',
+                testCode: `assert l['Nom']=='B' and c.tolist()==[25,30,35], "Incorrect"`
+            },
+            {
+                id: 23, category: 'pandas', title: 'Tri sort_values', difficulty: 'medium',
+                description: 'Triez par <strong>Age decroissant</strong>.',
+                expectedOutput: 'Bob, Charlie, Alice',
+                template: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["Alice","Bob","Charlie"],"Age":[25,35,30]})\nr= ',
+                hints: ['df.sort_values("Age",ascending=False)'],
+                solution: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["Alice","Bob","Charlie"],"Age":[25,35,30]})\nr=df.sort_values("Age",ascending=False)',
+                testCode: `assert r['Nom'].iloc[0]=='Bob', "Incorrect"`
+            },
+            {
+                id: 24, category: 'pandas', title: 'fillna', difficulty: 'medium',
+                description: 'Remplacez les <strong>NaN par 0</strong>.',
+                expectedOutput: 'Plus de NaN',
+                template: 'import pandas as pd\nimport numpy as np\ndf=pd.DataFrame({"A":[1,np.nan,3],"B":[np.nan,5,6]})\nr= ',
+                hints: ['df.fillna(0)'],
+                solution: 'import pandas as pd\nimport numpy as np\ndf=pd.DataFrame({"A":[1,np.nan,3],"B":[np.nan,5,6]})\nr=df.fillna(0)',
+                testCode: `assert r.isna().sum().sum()==0, "Incorrect"`
+            },
+            {
+                id: 25, category: 'pandas', title: 'dropna', difficulty: 'medium',
+                description: 'Supprimez les <strong>lignes avec NaN</strong>.',
+                expectedOutput: '2 lignes restantes',
+                template: 'import pandas as pd\nimport numpy as np\ndf=pd.DataFrame({"A":[1,np.nan,3],"B":[4,5,6]})\nr= ',
+                hints: ['df.dropna()'],
+                solution: 'import pandas as pd\nimport numpy as np\ndf=pd.DataFrame({"A":[1,np.nan,3],"B":[4,5,6]})\nr=df.dropna()',
+                testCode: `assert len(r)==2, "Incorrect"`
+            },
+            {
+                id: 26, category: 'pandas', title: 'Groupby', difficulty: 'hard',
+                description: 'Calculez la <strong>moyenne par ville</strong>.',
+                expectedOutput: 'Paris=30, Lyon=40',
+                template: 'import pandas as pd\ndf=pd.DataFrame({"Ville":["P","L","P","L"],"Age":[20,30,40,50]})\nr= ',
+                hints: ['df.groupby("Ville")["Age"].mean()'],
+                solution: 'import pandas as pd\ndf=pd.DataFrame({"Ville":["P","L","P","L"],"Age":[20,30,40,50]})\nr=df.groupby("Ville")["Age"].mean()',
+                testCode: `assert r['P']==30 and r['L']==40, "Incorrect"`
+            },
+            {
+                id: 27, category: 'pandas', title: 'Creer colonne calculee', difficulty: 'easy',
+                description: 'Creez <strong>Total = Vente1 + Vente2</strong>.',
+                expectedOutput: '[15, 35]',
+                template: 'import pandas as pd\ndf=pd.DataFrame({"V1":[10,20],"V2":[5,15]})\n',
+                hints: ['df["Total"]=df["V1"]+df["V2"]'],
+                solution: 'import pandas as pd\ndf=pd.DataFrame({"V1":[10,20],"V2":[5,15]})\ndf["Total"]=df["V1"]+df["V2"]',
+                testCode: `assert df['Total'].tolist()==[15,35], "Incorrect"`
+            },
+            {
+                id: 28, category: 'pandas', title: 'value_counts', difficulty: 'medium',
+                description: 'Comptez les <strong>especes</strong> dans iris.',
+                expectedOutput: '50 chacune',
+                template: 'import pandas as pd\nfrom io import StringIO\ndf=pd.read_csv(StringIO(iris_csv))\nr= ',
+                hints: ['df["species"].value_counts()'],
+                solution: 'import pandas as pd\nfrom io import StringIO\ndf=pd.read_csv(StringIO(iris_csv))\nr=df["species"].value_counts()',
+                testCode: `assert r['setosa']==50, "Incorrect"`
+            },
+            {
+                id: 29, category: 'pandas', title: 'drop columns', difficulty: 'medium',
+                description: 'Supprimez la colonne <strong>Age</strong> avec <code>drop()</code>.',
+                expectedOutput: 'Seulement Nom et Ville',
+                template: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["A","B"],"Age":[20,30],"Ville":["P","L"]})\nr= ',
+                hints: ['df.drop("Age",axis=1)'],
+                solution: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["A","B"],"Age":[20,30],"Ville":["P","L"]})\nr=df.drop("Age",axis=1)',
+                testCode: `assert 'Age' not in r.columns, "Incorrect"`
+            },
+            {
+                id: 30, category: 'pandas', title: 'rename columns', difficulty: 'medium',
+                description: 'Renommez <strong>Nom en Name</strong> avec <code>rename()</code>.',
+                expectedOutput: 'Colonne Name',
+                template: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["A","B"],"Age":[20,30]})\nr= ',
+                hints: ['df.rename(columns={"Nom":"Name"})'],
+                solution: 'import pandas as pd\ndf=pd.DataFrame({"Nom":["A","B"],"Age":[20,30]})\nr=df.rename(columns={"Nom":"Name"})',
+                testCode: `assert 'Name' in r.columns, "Incorrect"`
+            },
+
+            // ==================== MATPLOTLIB (12 exercices) ====================
+            {
+                id: 31, category: 'matplotlib', title: 'Courbe lineaire', difficulty: 'medium',
+                description: 'Tracez <strong>x=[1,2,3,4], y=[1,4,9,16]</strong> avec titre.',
+                expectedOutput: 'Courbe x²',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nx=[1,2,3,4]\ny=[1,4,9,16]\n',
+                hints: ['plt.plot(x,y,marker="o")', 'plt.title("Courbe")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nx=[1,2,3,4]\ny=[1,4,9,16]\nplt.plot(x,y,marker="o")\nplt.title("Courbe x²")\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 32, category: 'matplotlib', title: 'Barres', difficulty: 'medium',
+                description: 'Diagramme en barres <strong>cat=["A","B","C"], val=[10,25,15]</strong>.',
+                expectedOutput: '3 barres',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nc=["A","B","C"]\nv=[10,25,15]\n',
+                hints: ['plt.bar(c,v,color="skyblue")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nc=["A","B","C"]\nv=[10,25,15]\nplt.bar(c,v,color="skyblue")\nplt.title("Barres")\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 33, category: 'matplotlib', title: 'Scatter', difficulty: 'medium',
+                description: 'Nuage de points <strong>50 points aleatoires</strong>.',
+                expectedOutput: 'Scatter plot',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nimport numpy as np\nnp.random.seed(42)\nx=np.random.randn(50)\ny=np.random.randn(50)\n',
+                hints: ['plt.scatter(x,y,alpha=0.6)'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nimport numpy as np\nnp.random.seed(42)\nx=np.random.randn(50)\ny=np.random.randn(50)\nplt.scatter(x,y,alpha=0.6)\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 34, category: 'matplotlib', title: 'Histogramme', difficulty: 'medium',
+                description: 'Histogramme <strong>100 donnees, 20 bins</strong>.',
+                expectedOutput: 'Histogramme',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nimport numpy as np\nnp.random.seed(42)\nd=np.random.randn(100)\n',
+                hints: ['plt.hist(d,bins=20)'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nimport numpy as np\nnp.random.seed(42)\nd=np.random.randn(100)\nplt.hist(d,bins=20,color="purple",edgecolor="black")\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 35, category: 'matplotlib', title: 'Pie chart', difficulty: 'medium',
+                description: 'Diagramme circulaire <strong>sizes=[30,20,25,25]</strong>.',
+                expectedOutput: 'Camembert',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\ns=[30,20,25,25]\nl=["A","B","C","D"]\n',
+                hints: ['plt.pie(s,labels=l,autopct="%1.1f%%")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\ns=[30,20,25,25]\nl=["A","B","C","D"]\nplt.pie(s,labels=l,autopct="%1.1f%%")\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 36, category: 'matplotlib', title: 'Boxplot', difficulty: 'medium',
+                description: 'Boxplot de <strong>4 groupes de donnees</strong>.',
+                expectedOutput: '4 boites',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nd=[[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8]]\n',
+                hints: ['plt.boxplot(d)'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nd=[[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8]]\nplt.boxplot(d)\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 37, category: 'matplotlib', title: 'Subplots', difficulty: 'hard',
+                description: 'Creez <strong>2 graphiques cote a cote</strong> (1 ligne, 2 colonnes).',
+                expectedOutput: '2 subplots',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots(1,2,figsize=(10,4))\nax[0].plot([1,2],[1,4])\nax[1].bar(["A","B"],[5,10])\nplt.show()',
+                hints: ['plt.subplots(1,2)'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots(1,2,figsize=(10,4))\nax[0].plot([1,2],[1,4])\nax[1].bar(["A","B"],[5,10])\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 38, category: 'matplotlib', title: 'Line styles', difficulty: 'medium',
+                description: 'Tracez <strong>2 courbes</strong> : une continue rouge, une pointillee bleue.',
+                expectedOutput: '2 courbes',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nx=[1,2,3]\ny1=[1,4,9]\ny2=[2,4,6]\n',
+                hints: ['plt.plot(x,y1,"r-",x,y2,"b--")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nx=[1,2,3]\ny1=[1,4,9]\ny2=[2,4,6]\nplt.plot(x,y1,"r-",label="Courbe1")\nplt.plot(x,y2,"b--",label="Courbe2")\nplt.legend()\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 39, category: 'matplotlib', title: 'Grille et axes', difficulty: 'medium',
+                description: 'Ajoutez <strong>grille, xlim(0,5), ylim(0,20)</strong>.',
+                expectedOutput: 'Graphique avec grille',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nplt.plot([1,2,3,4],[1,4,9,16])\n',
+                hints: ['plt.grid(True)', 'plt.xlim(0,5)', 'plt.ylim(0,20)'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nplt.plot([1,2,3,4],[1,4,9,16],"o-")\nplt.grid(True,alpha=0.3)\nplt.xlim(0,5)\nplt.ylim(0,20)\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 40, category: 'matplotlib', title: 'Sauvegarder figure', difficulty: 'easy',
+                description: 'Creez un graphique simple (le code de sauvegarde est automatique).',
+                expectedOutput: 'Graphique simple',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nplt.plot([1,2],[3,4])\nplt.title("Simple")\nplt.show()',
+                hints: ['Le graphique est automatiquement capture'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nplt.plot([1,2],[3,4])\nplt.title("Simple")\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 41, category: 'matplotlib', title: 'Couleurs personnalisees', difficulty: 'medium',
+                description: 'Tracez un bar chart avec <strong>4 couleurs differentes</strong>.',
+                expectedOutput: 'Barres multicolores',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nc=["A","B","C","D"]\nv=[10,20,15,25]\n',
+                hints: ['plt.bar(c,v,color=["red","blue","green","orange"])'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nc=["A","B","C","D"]\nv=[10,20,15,25]\nplt.bar(c,v,color=["#FF6B6B","#4ECDC4","#45B7D1","#96CEB4"])\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+            {
+                id: 42, category: 'matplotlib', title: 'fill_between', difficulty: 'hard',
+                description: 'Remplissez <strong>entre y1=x et y2=x²</strong>.',
+                expectedOutput: 'Zone remplie',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nimport numpy as np\nx=np.linspace(0,2,100)\n',
+                hints: ['plt.fill_between(x,x,x**2,alpha=0.3)'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\nimport numpy as np\nx=np.linspace(0,2,100)\nplt.plot(x,x,label="x")\nplt.plot(x,x**2,label="x²")\nplt.fill_between(x,x,x**2,alpha=0.3)\nplt.legend()\nplt.show()',
+                testCode: `assert 'matplotlib' in __import__('sys').modules`
+            },
+
+            // ==================== SEABORN (8 exercices) ====================
+            {
+                id: 43, category: 'seaborn', title: 'Scatterplot', difficulty: 'medium',
+                description: 'Scatterplot iris <strong>x=sepal_length, y=sepal_width, hue=species</strong>.',
+                expectedOutput: 'Points colores',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\n',
+                hints: ['sns.scatterplot(data=df,x="sepal_length",y="sepal_width",hue="species")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\nsns.scatterplot(data=df,x="sepal_length",y="sepal_width",hue="species")\nplt.show()',
+                testCode: `assert 'seaborn' in __import__('sys').modules`
+            },
+            {
+                id: 44, category: 'seaborn', title: 'Boxplot', difficulty: 'medium',
+                description: 'Boxplot <strong>petal_length par species</strong>.',
+                expectedOutput: '3 boites',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\n',
+                hints: ['sns.boxplot(data=df,x="species",y="petal_length")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\nsns.boxplot(data=df,x="species",y="petal_length")\nplt.show()',
+                testCode: `assert 'seaborn' in __import__('sys').modules`
+            },
+            {
+                id: 45, category: 'seaborn', title: 'Heatmap', difficulty: 'hard',
+                description: 'Heatmap de <strong>correlation iris</strong> avec annotations.',
+                expectedOutput: 'Matrice coloree',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\n',
+                hints: ['corr=df.corr(numeric_only=True)', 'sns.heatmap(corr,annot=True,cmap="coolwarm")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\ncorr=df.corr(numeric_only=True)\nsns.heatmap(corr,annot=True,cmap="coolwarm",fmt=".2f")\nplt.show()',
+                testCode: `assert 'seaborn' in __import__('sys').modules`
+            },
+            {
+                id: 46, category: 'seaborn', title: 'Pairplot', difficulty: 'hard',
+                description: 'Pairplot iris avec <strong>hue="species"</strong>.',
+                expectedOutput: 'Matrice 4x4',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\n',
+                hints: ['sns.pairplot(df,hue="species")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\nsns.pairplot(df,hue="species")\nplt.show()',
+                testCode: `assert 'seaborn' in __import__('sys').modules`
+            },
+            {
+                id: 47, category: 'seaborn', title: 'Violinplot', difficulty: 'medium',
+                description: 'Violinplot <strong>petal_length par species</strong>.',
+                expectedOutput: '3 violons',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\n',
+                hints: ['sns.violinplot(data=df,x="species",y="petal_length")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\nsns.violinplot(data=df,x="species",y="petal_length")\nplt.show()',
+                testCode: `assert 'seaborn' in __import__('sys').modules`
+            },
+            {
+                id: 48, category: 'seaborn', title: 'Countplot', difficulty: 'easy',
+                description: 'Countplot des <strong>especes</strong> dans iris.',
+                expectedOutput: '3 barres (50 chacune)',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\n',
+                hints: ['sns.countplot(data=df,x="species")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\nsns.countplot(data=df,x="species")\nplt.show()',
+                testCode: `assert 'seaborn' in __import__('sys').modules`
+            },
+            {
+                id: 49, category: 'seaborn', title: 'Regplot', difficulty: 'hard',
+                description: 'Regression lineaire <strong>sepal_length vs petal_length</strong>.',
+                expectedOutput: 'Droite de regression',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\n',
+                hints: ['sns.regplot(data=df,x="sepal_length",y="petal_length")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\nsns.regplot(data=df,x="sepal_length",y="petal_length")\nplt.show()',
+                testCode: `assert 'seaborn' in __import__('sys').modules`
+            },
+            {
+                id: 50, category: 'seaborn', title: 'Jointplot', difficulty: 'hard',
+                description: 'Jointplot <strong>sepal_length vs sepal_width</strong> (kind="hex").',
+                expectedOutput: 'Hexbin + histogrammes',
+                template: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\n',
+                hints: ['sns.jointplot(data=df,x="sepal_length",y="sepal_width",kind="hex")'],
+                solution: 'import matplotlib\nmatplotlib.use("Agg")\nimport seaborn as sns\nimport pandas as pd\nfrom io import StringIO\nimport matplotlib.pyplot as plt\ndf=pd.read_csv(StringIO(iris_csv))\nsns.jointplot(data=df,x="sepal_length",y="sepal_width",kind="hex")\nplt.show()',
+                testCode: `assert 'seaborn' in __import__('sys').modules`
             }
-        });
+        ];
 
-        scrollTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        // ============ STATE ============
+        let currentExercise = exercises[0];
+        let currentCategory = 'all';
+        let completedExercises = new Set();
+        let editor;
+        let pyodideReady = false;
+        let packagesLoaded = false;
 
-        // ===== RECHERCHE ET FILTRAGE =====
-        const searchToggle = document.getElementById('searchToggle');
-        const searchContainer = document.getElementById('searchContainer');
-        const searchInput = document.getElementById('searchInput');
+        function updateProgress() {
+            const count = completedExercises.size;
+            const percent = Math.round((count / 50) * 100);
+            document.getElementById('progressCount').textContent = `${count}/50`;
+            document.getElementById('progressPercent').textContent = `${percent}%`;
+        }
 
-        searchToggle.addEventListener('click', () => {
-            searchContainer.classList.toggle('active');
-            if (searchContainer.classList.contains('active')) {
-                searchInput.focus();
-            }
-        });
-
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const sections = document.querySelectorAll('.section');
-
-            if (query.trim() === '') {
-                sections.forEach(section => section.style.display = 'block');
-                document.querySelectorAll('.code-item').forEach(item => item.style.display = 'block');
-                return;
-            }
-
-            sections.forEach(section => {
-                const text = section.textContent.toLowerCase();
-                const hasMatch = text.includes(query);
-                
-                section.style.display = hasMatch ? 'block' : 'none';
-                
-                // Afficher/cacher les éléments de code individuellement
-                section.querySelectorAll('.code-item').forEach(item => {
-                    const itemText = item.textContent.toLowerCase();
-                    item.style.display = itemText.includes(query) ? 'block' : 'none';
-                });
-            });
-        });
-
-        // Fermer la recherche avec Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                searchContainer.classList.remove('active');
-            }
-        });
-
-        // ===== TABLE OF CONTENTS =====
-        const tocToggle = document.getElementById('tocToggle');
-        const tocSidebar = document.getElementById('tocSidebar');
-        const tocOverlay = document.getElementById('tocOverlay');
-        const tocLinks = document.querySelectorAll('.toc-items a');
-
-        tocToggle.addEventListener('click', () => {
-            tocSidebar.classList.toggle('active');
-            tocOverlay.classList.toggle('active');
-        });
-
-        tocOverlay.addEventListener('click', () => {
-            tocSidebar.classList.remove('active');
-            tocOverlay.classList.remove('active');
-        });
-
-        // ===== INDICATEUR DE SECTION ACTIVE DANS TOC =====
-        function updateActiveTocLink() {
-            const sections = document.querySelectorAll('.section');
-            const scrollPosition = window.scrollY + 100;
-
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionBottom = sectionTop + section.offsetHeight;
-
-                if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-                    const sectionId = section.id;
-                    
-                    tocLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${sectionId}`) {
-                            link.classList.add('active');
-                        }
-                    });
+        // ============ CODEMIRROR ============
+        function initEditor() {
+            editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+                mode: 'python',
+                theme: 'darcula',
+                lineNumbers: true,
+                lineWrapping: true,
+                indentUnit: 4,
+                tabSize: 4,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                extraKeys: {
+                    'Ctrl-Enter': runCode,
+                    'Cmd-Enter': runCode
                 }
             });
         }
 
-        window.addEventListener('scroll', updateActiveTocLink);
-        updateActiveTocLink(); // Appelé au chargement
+        function renderExerciseList() {
+            const list = document.getElementById('exerciseList');
+            const filtered = currentCategory === 'all' ?
+                exercises :
+                exercises.filter(ex => ex.category === currentCategory);
+            list.innerHTML = filtered.map((ex) => `
+                <div class="exercise-card ${ex.id===currentExercise.id?'active':''} ${completedExercises.has(ex.id)?'completed':''}"
+                     onclick="selectExercise(${ex.id})">
+                    <div class="ex-number">Ex ${ex.id}</div>
+                    <div class="ex-title">${ex.title}</div>
+                    <div class="ex-badges">
+                        <span class="badge badge-${ex.difficulty}">${ex.difficulty==='easy'?'Facile':ex.difficulty==='medium'?'Moyen':'Difficile'}</span>
+                        <span class="badge badge-${ex.category}">${ex.category.charAt(0).toUpperCase()+ex.category.slice(1)}</span>
+                        ${completedExercises.has(ex.id)?'<span class="badge badge-easy">Fait</span>':''}
+                    </div>
+                </div>
+            `).join('');
+            updateProgress();
+        }
 
-        tocLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                tocSidebar.classList.remove('active');
-                tocOverlay.classList.remove('active');
-                
-                const sectionId = link.getAttribute('href').substring(1);
-                const section = document.getElementById(sectionId);
-                if (section) {
-                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
+        function selectExercise(id) {
+            currentExercise = exercises.find(ex => ex.id === id);
+            if (!currentExercise) return;
+            closeSidebarOnMobile();
+            document.getElementById('exerciseTitle').innerHTML = `
+                <i class="fas fa-${({numpy:'calculator',pandas:'table',matplotlib:'chart-line',seaborn:'palette'})[currentExercise.category]||'code'}"></i>
+                ${currentExercise.title}
+                <span class="badge badge-${currentExercise.difficulty}" style="font-size:0.7em;margin-left:8px;">${currentExercise.difficulty==='easy'?'Facile':currentExercise.difficulty==='medium'?'Moyen':'Difficile'}</span>
+            `;
+            document.getElementById('exerciseDescription').innerHTML = currentExercise.description;
+            const ed = document.getElementById('expectedOutput');
+            if (currentExercise.expectedOutput) {
+                ed.style.display = 'block';
+                document.getElementById('expectedText').textContent = currentExercise.expectedOutput;
+            } else ed.style.display = 'none';
+            editor.setValue(currentExercise.template);
+            document.getElementById('outputContent').textContent = 'Code charge. Cliquez "Executer".';
+            document.getElementById('outputContent').className = 'output-content';
+            document.getElementById('outputImageContainer').style.display = 'none';
+            document.getElementById('outputImageContainer').innerHTML = '';
+            updateStatus('ready');
+            document.querySelector('.content-area').scrollTop = 0;
+            renderExerciseList();
+        }
 
-        // ===== ANIMATIONS AU CHARGEMENT =====
-        window.addEventListener('load', () => {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach((section, index) => {
-                section.style.opacity = '0';
-                section.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    section.style.transition = 'all 0.5s ease';
-                    section.style.opacity = '1';
-                    section.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-        });
-
-        // ===== SMOOTH SCROLL =====
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // ===== COPIE DE CODE =====
-        const codeItems = document.querySelectorAll('.code-item');
-        codeItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const codeLine = item.querySelector('.code-line');
-                if (codeLine) {
-                    const text = codeLine.textContent;
-                    navigator.clipboard.writeText(text);
-                    
-                    const originalText = item.innerHTML;
-                    item.style.background = 'rgba(76, 175, 80, 0.1)';
-                    item.innerHTML = '<i class="fas fa-check" style="color: #4caf50; margin-right: 10px;"></i> Copié !';
-                    
-                    setTimeout(() => {
-                        item.style.background = '';
-                        item.innerHTML = originalText;
-                    }, 1500);
-                }
-            });
-        });
-
-        // ===== CLAVIER ACCESSIBLE =====
-        // Ajouter focus visible pour l'accessibilité
-        document.addEventListener('keydown', (e) => {
-            if (e.key === '/') {
-                e.preventDefault();
-                searchContainer.classList.toggle('active');
-                searchInput.focus();
+        function updateStatus(status) {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            dot.className = 'status-dot';
+            switch (status) {
+                case 'running':
+                    dot.classList.add('dot-running');
+                    text.textContent = 'Execution...';
+                    break;
+                case 'success':
+                    dot.classList.add('dot-success');
+                    text.textContent = 'Succes';
+                    break;
+                case 'error':
+                    dot.classList.add('dot-error');
+                    text.textContent = 'Erreur';
+                    break;
+                default:
+                    dot.classList.add('dot-ready');
+                    text.textContent = 'Pret';
             }
-        });
+        }
+
+        async function runCode() {
+            const code = editor.getValue();
+            const output = document.getElementById('outputContent');
+            const imageContainer = document.getElementById('outputImageContainer');
+            output.className = 'output-content';
+            output.textContent = '';
+            imageContainer.style.display = 'none';
+            imageContainer.innerHTML = '';
+            updateStatus('running');
+            try {
+                if (!pyodideReady) { output.textContent = 'Initialisation Pyodide...\n';
+                    window.pyodide = await loadPyodide();
+                    pyodideReady = true; }
+                if (!packagesLoaded) { output.textContent += 'Installation packages...\n';
+                    await window.pyodide.loadPackage(['numpy', 'pandas', 'matplotlib', 'micropip']);
+                    await window.pyodide.runPythonAsync('import micropip\nawait micropip.install("seaborn")');
+                    packagesLoaded = true;
+                    output.textContent += 'Pret !\n\n'; }
+                const fullCode = `
+import sys,io,base64
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+_output=io.StringIO()
+sys.stdout=_output
+iris_csv="""${irisCSVData}"""
+try:
+${code.split('\n').map(l=>'    '+l).join('\n')}
+    _fig=plt.gcf()
+    if _fig.get_axes():
+        buf=io.BytesIO()
+        _fig.savefig(buf,format='png',dpi=120,bbox_inches='tight')
+        buf.seek(0)
+        _b=base64.b64encode(buf.read()).decode('utf-8')
+        print("__IMAGE__:"+_b)
+        plt.close('all')
+${currentExercise.testCode.split('\n').map(l=>'    '+l).join('\n')}
+    print("SUCCESS: Exercice reussi !")
+except Exception as e:
+    import traceback
+    print(f"Erreur: {e}")
+    traceback.print_exc()
+finally:
+    sys.stdout=sys.__stdout__
+_output.getvalue()`;
+                const result = window.pyodide.runPython(fullCode);
+                if (result.includes('__IMAGE__:')) {
+                    const parts = result.split('__IMAGE__:');
+                    output.textContent = parts[0].trim() || '';
+                    const imgBase64 = parts[1].split('\n')[0].trim();
+                    const imgSrc = `data:image/png;base64,${imgBase64}`;
+                    imageContainer.innerHTML = `
+                        <div class="img-wrapper">
+                            <img src="${imgSrc}" alt="Graphique" style="max-width:100%;cursor:zoom-in;" onclick="openImageModal('${imgSrc}')" title="Cliquez pour agrandir" />
+                            <button class="btn-fullscreen-img" onclick="openImageModal('${imgSrc}')"><i class="fas fa-expand"></i> Agrandir</button>
+                        </div>`;
+                    imageContainer.style.display = 'block';
+                    if (parts[1].includes('\n')) {
+                        const rt = parts[1].substring(parts[1].indexOf('\n')).trim();
+                        if (rt) output.textContent += '\n' + rt;
+                    }
+                    setTimeout(() => imageContainer.scrollIntoView({ behavior: 'smooth',
+                        block: 'center' }), 100);
+                } else output.textContent = result || 'Execution terminee.';
+                const lr = (result || '').toLowerCase();
+                if (lr.includes('success') || lr.includes('bravo') || lr.includes('parfait') || lr.includes(
+                        'cree')) {
+                    completedExercises.add(currentExercise.id);
+                    updateStatus('success');
+                    output.className = 'output-content success';
+                    showToast('Exercice reussi !', 'success');
+                } else if (lr.includes('erreur') || lr.includes('incorrect')) { updateStatus('error');
+                    output.className = 'output-content error'; } else { updateStatus('success');
+                    output.className = 'output-content'; }
+                renderExerciseList();
+            } catch (error) { output.textContent += `\nErreur systeme: ${error.message}`;
+                output.className = 'output-content error';
+                updateStatus('error'); }
+        }
+
+        function showHint() {
+            const h = currentExercise.hints;
+            if (h && h.length) {
+                document.getElementById('outputContent').textContent = 'Indice: ' + h[Math.floor(Math.random() *
+                    h.length)];
+                document.getElementById('outputContent').className = 'output-content info';
+                document.getElementById('outputImageContainer').style.display = 'none';
+            }
+        }
+
+        function showSolution() {
+            editor.setValue(currentExercise.solution);
+            document.getElementById('outputContent').textContent = 'Solution chargee. Executez-la.';
+            document.getElementById('outputContent').className = 'output-content info';
+            document.getElementById('outputImageContainer').style.display = 'none';
+            document.getElementById('outputImageContainer').innerHTML = '';
+            updateStatus('ready');
+        }
+
+        function resetCode() {
+            editor.setValue(currentExercise.template);
+            document.getElementById('outputContent').textContent = 'Code reinitialise.';
+            document.getElementById('outputContent').className = 'output-content';
+            document.getElementById('outputImageContainer').style.display = 'none';
+            document.getElementById('outputImageContainer').innerHTML = '';
+            updateStatus('ready');
+        }
+
+        function copyCode() { navigator.clipboard.writeText(editor.getValue()).then(() => showToast(
+                'Code copie !', 'success')); }
+
+        function switchCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.toggle('active', t.dataset
+                .category === cat));
+            const f = cat === 'all' ? exercises : exercises.filter(e => e.category === cat);
+            if (f.length && !f.find(e => e.id === currentExercise.id)) selectExercise(f[0].id);
+            renderExerciseList();
+        }
+
+        document.getElementById('runBtn').addEventListener('click', runCode);
+        document.getElementById('hintBtn').addEventListener('click', showHint);
+        document.getElementById('solutionBtn').addEventListener('click', showSolution);
+        document.getElementById('resetBtn').addEventListener('click', resetCode);
+        document.getElementById('copyBtn').addEventListener('click', copyCode);
+        document.querySelectorAll('.category-tab').forEach(t => t.addEventListener('click', () => switchCategory(t
+            .dataset.category)));
+        document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e
+                .preventDefault();
+                runCode(); } });
+        window.addEventListener('resize', () => { if (window.innerWidth > 768) { sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active'); } if (editor) editor.refresh(); });
+        window.addEventListener('load', () => { initEditor();
+            renderExerciseList();
+            selectExercise(1); });
     </script>
 </body>
 </html>

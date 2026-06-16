@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hors-ligne - Python Data Exercices</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #1a202c;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            background: #2d3748;
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #f6e05e;
+        }
+        h1 { font-size: 1.5em; margin-bottom: 15px; color: #fff; }
+        p { font-size: 0.95em; line-height: 1.6; margin-bottom: 12px; color: #a0aec0; }
+        .status { 
+            display: inline-block;
+            padding: 6px 14px;
+            background: #f6e05e;
+            color: #1a202c;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85em;
+            margin: 15px 0;
+        }
+        button {
+            background: #3182ce;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+        button:hover { background: #2c5282; transform: translateY(-1px); }
+        .info {
+            font-size: 0.8em;
+            color: #718096;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">&#9889;</div>
+        <h1>Mode Hors-ligne</h1>
+        <span class="status">HORS-LIGNE</span>
+        <p>Vous n'etes pas connecte a Internet. Les exercices deja charges restent accessibles.</p>
+        <p>Si c'est votre premiere visite, vous devez etre connecte pour telecharger les packages Python (Pyodide).</p>
+        <button onclick="window.location.reload()">
+            Reessayer
+        </button>
+        <button onclick="window.location.href='/'">
+            Retour a l'accueil
+        </button>
+        <div class="info">
+            Une fois les packages telecharges, tous les exercices fonctionnent hors-ligne.
+        </div>
+    </div>
+</body>
+</html>
