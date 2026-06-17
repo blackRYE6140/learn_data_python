@@ -61,36 +61,19 @@
             "purpose": "any maskable"
         }
     ],
-    "screenshots": [
-        {
-            "src": "screenshot-exercises.png",
-            "sizes": "1280x720",
-            "type": "image/png",
-            "form_factor": "wide",
-            "label": "Interface d'exercices"
-        },
-        {
-            "src": "screenshot-mobile.png",
-            "sizes": "720x1280",
-            "type": "image/png",
-            "form_factor": "narrow",
-            "label": "Version mobile"
-        }
-    ],
+    "screenshots": [],
     "shortcuts": [
         {
             "name": "Exercices NumPy",
             "short_name": "NumPy",
             "description": "Acceder aux exercices NumPy",
-            "url": "/?category=numpy",
-            "icons": [{ "src": "icon-numpy.png", "sizes": "96x96" }]
+            "url": "/?category=numpy"
         },
         {
             "name": "Exercices Pandas",
             "short_name": "Pandas",
             "description": "Acceder aux exercices Pandas",
-            "url": "/?category=pandas",
-            "icons": [{ "src": "icon-pandas.png", "sizes": "96x96" }]
+            "url": "/?category=pandas"
         }
     ],
     "related_applications": [],
